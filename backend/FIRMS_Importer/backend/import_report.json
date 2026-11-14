@@ -1,0 +1,1031 @@
+{
+  "mode": "schema normalization only; no filtering or deduplication",
+  "total": 276533,
+  "files": [
+    {
+      "file": "modis_2000_Portugal.csv",
+      "rows": 3,
+      "type_counts": {
+        "0": 3
+      }
+    },
+    {
+      "file": "modis_2001_Portugal.csv",
+      "rows": 1600,
+      "type_counts": {
+        "0": 1599,
+        "3": 1
+      }
+    },
+    {
+      "file": "modis_2002_Portugal.csv",
+      "rows": 2645,
+      "type_counts": {
+        "0": 2645
+      }
+    },
+    {
+      "file": "modis_2003_Portugal.csv",
+      "rows": 6246,
+      "type_counts": {
+        "0": 6246
+      }
+    },
+    {
+      "file": "modis_2004_Portugal.csv",
+      "rows": 3042,
+      "type_counts": {
+        "0": 3040,
+        "3": 2
+      }
+    },
+    {
+      "file": "modis_2005_Portugal.csv",
+      "rows": 9264,
+      "type_counts": {
+        "0": 9263,
+        "3": 1
+      }
+    },
+    {
+      "file": "modis_2006_Portugal.csv",
+      "rows": 2652,
+      "type_counts": {
+        "0": 2650,
+        "3": 2
+      }
+    },
+    {
+      "file": "modis_2007_Portugal.csv",
+      "rows": 1585,
+      "type_counts": {
+        "0": 1585
+      }
+    },
+    {
+      "file": "modis_2008_Portugal.csv",
+      "rows": 999,
+      "type_counts": {
+        "0": 999
+      }
+    },
+    {
+      "file": "modis_2009_Portugal.csv",
+      "rows": 3466,
+      "type_counts": {
+        "0": 3466
+      }
+    },
+    {
+      "file": "modis_2010_Portugal.csv",
+      "rows": 4216,
+      "type_counts": {
+        "0": 4207,
+        "1": 9
+      }
+    },
+    {
+      "file": "modis_2011_Portugal.csv",
+      "rows": 3033,
+      "type_counts": {
+        "0": 3032,
+        "3": 1
+      }
+    },
+    {
+      "file": "modis_2012_Portugal.csv",
+      "rows": 3552,
+      "type_counts": {
+        "0": 3544,
+        "1": 1,
+        "3": 7
+      }
+    },
+    {
+      "file": "modis_2013_Portugal.csv",
+      "rows": 4438,
+      "type_counts": {
+        "0": 4437,
+        "3": 1
+      }
+    },
+    {
+      "file": "modis_2014_Portugal.csv",
+      "rows": 614,
+      "type_counts": {
+        "0": 613,
+        "3": 1
+      }
+    },
+    {
+      "file": "modis_2015_Portugal.csv",
+      "rows": 2058,
+      "type_counts": {
+        "0": 2058
+      }
+    },
+    {
+      "file": "modis_2016_Portugal.csv",
+      "rows": 4801,
+      "type_counts": {
+        "0": 4800,
+        "3": 1
+      }
+    },
+    {
+      "file": "modis_2017_Portugal.csv",
+      "rows": 6645,
+      "type_counts": {
+        "0": 6638,
+        "3": 7
+      }
+    },
+    {
+      "file": "modis_2018_Portugal.csv",
+      "rows": 1310,
+      "type_counts": {
+        "0": 1286,
+        "2": 22,
+        "3": 2
+      }
+    },
+    {
+      "file": "modis_2019_Portugal.csv",
+      "rows": 1269,
+      "type_counts": {
+        "0": 1238,
+        "2": 31
+      }
+    },
+    {
+      "file": "modis_2020_Portugal.csv",
+      "rows": 1349,
+      "type_counts": {
+        "0": 1323,
+        "2": 25,
+        "3": 1
+      }
+    },
+    {
+      "file": "modis_2021_Portugal.csv",
+      "rows": 950,
+      "type_counts": {
+        "0": 944,
+        "2": 5,
+        "3": 1
+      }
+    },
+    {
+      "file": "modis_2022_Portugal.csv",
+      "rows": 2273,
+      "type_counts": {
+        "0": 2258,
+        "2": 14,
+        "3": 1
+      }
+    },
+    {
+      "file": "modis_2023_Portugal.csv",
+      "rows": 1062,
+      "type_counts": {
+        "0": 1049,
+        "2": 13
+      }
+    },
+    {
+      "file": "modis_2024_Portugal.csv",
+      "rows": 3151,
+      "type_counts": {
+        "0": 3107,
+        "2": 43,
+        "3": 1
+      }
+    },
+    {
+      "file": "modis_2025_Portugal.csv",
+      "rows": 4867,
+      "type_counts": {
+        "0": 4853,
+        "2": 14
+      }
+    },
+    {
+      "file": "modis_2009_Portugal.csv",
+      "rows": 3466,
+      "type_counts": {
+        "0": 3466
+      }
+    },
+    {
+      "file": "modis_2010_Portugal.csv",
+      "rows": 4216,
+      "type_counts": {
+        "0": 4207,
+        "1": 9
+      }
+    },
+    {
+      "file": "modis_2011_Portugal.csv",
+      "rows": 3033,
+      "type_counts": {
+        "0": 3032,
+        "3": 1
+      }
+    },
+    {
+      "file": "modis_2012_Portugal.csv",
+      "rows": 3552,
+      "type_counts": {
+        "0": 3544,
+        "1": 1,
+        "3": 7
+      }
+    },
+    {
+      "file": "modis_2013_Portugal.csv",
+      "rows": 4438,
+      "type_counts": {
+        "0": 4437,
+        "3": 1
+      }
+    },
+    {
+      "file": "modis_2014_Portugal.csv",
+      "rows": 614,
+      "type_counts": {
+        "0": 613,
+        "3": 1
+      }
+    },
+    {
+      "file": "modis_2015_Portugal.csv",
+      "rows": 2058,
+      "type_counts": {
+        "0": 2058
+      }
+    },
+    {
+      "file": "modis_2016_Portugal.csv",
+      "rows": 4801,
+      "type_counts": {
+        "0": 4800,
+        "3": 1
+      }
+    },
+    {
+      "file": "modis_2017_Portugal.csv",
+      "rows": 6645,
+      "type_counts": {
+        "0": 6638,
+        "3": 7
+      }
+    },
+    {
+      "file": "modis_2018_Portugal.csv",
+      "rows": 1310,
+      "type_counts": {
+        "0": 1286,
+        "2": 22,
+        "3": 2
+      }
+    },
+    {
+      "file": "modis_2019_Portugal.csv",
+      "rows": 1269,
+      "type_counts": {
+        "0": 1238,
+        "2": 31
+      }
+    },
+    {
+      "file": "modis_2020_Portugal.csv",
+      "rows": 1349,
+      "type_counts": {
+        "0": 1323,
+        "2": 25,
+        "3": 1
+      }
+    },
+    {
+      "file": "modis_2021_Portugal.csv",
+      "rows": 950,
+      "type_counts": {
+        "0": 944,
+        "2": 5,
+        "3": 1
+      }
+    },
+    {
+      "file": "modis_2022_Portugal.csv",
+      "rows": 2273,
+      "type_counts": {
+        "0": 2258,
+        "2": 14,
+        "3": 1
+      }
+    },
+    {
+      "file": "viirs-jpss1_2018_Portugal.csv",
+      "rows": 3672,
+      "type_counts": {
+        "0": 3361,
+        "2": 304,
+        "3": 7
+      }
+    },
+    {
+      "file": "viirs-jpss1_2019_Portugal.csv",
+      "rows": 3596,
+      "type_counts": {
+        "0": 3254,
+        "2": 336,
+        "3": 6
+      }
+    },
+    {
+      "file": "viirs-jpss1_2020_Portugal.csv",
+      "rows": 3988,
+      "type_counts": {
+        "0": 3677,
+        "2": 311
+      }
+    },
+    {
+      "file": "viirs-jpss1_2021_Portugal.csv",
+      "rows": 2501,
+      "type_counts": {
+        "0": 2242,
+        "2": 256,
+        "3": 3
+      }
+    },
+    {
+      "file": "viirs-jpss1_2022_Portugal.csv",
+      "rows": 5860,
+      "type_counts": {
+        "0": 5653,
+        "2": 205,
+        "3": 2
+      }
+    },
+    {
+      "file": "viirs-jpss1_2023_Portugal.csv",
+      "rows": 3384,
+      "type_counts": {
+        "0": 3105,
+        "2": 277,
+        "3": 2
+      }
+    },
+    {
+      "file": "viirs-jpss1_2024_Portugal.csv",
+      "rows": 12010,
+      "type_counts": {
+        "0": 11767,
+        "2": 240,
+        "3": 3
+      }
+    },
+    {
+      "file": "viirs-jpss1_2025_Portugal.csv",
+      "rows": 13862,
+      "type_counts": {
+        "0": 13521,
+        "2": 339,
+        "3": 2
+      }
+    },
+    {
+      "file": "viirs-snpp_2012_Portugal.csv",
+      "rows": 9473,
+      "type_counts": {
+        "0": 9074,
+        "2": 390,
+        "3": 9
+      }
+    },
+    {
+      "file": "viirs-snpp_2013_Portugal.csv",
+      "rows": 12102,
+      "type_counts": {
+        "0": 11486,
+        "2": 602,
+        "3": 14
+      }
+    },
+    {
+      "file": "viirs-snpp_2014_Portugal.csv",
+      "rows": 2341,
+      "type_counts": {
+        "0": 1816,
+        "2": 518,
+        "3": 7
+      }
+    },
+    {
+      "file": "viirs-snpp_2015_Portugal.csv",
+      "rows": 5875,
+      "type_counts": {
+        "0": 5404,
+        "2": 467,
+        "3": 4
+      }
+    },
+    {
+      "file": "viirs-snpp_2016_Portugal.csv",
+      "rows": 13930,
+      "type_counts": {
+        "0": 13519,
+        "2": 403,
+        "3": 8
+      }
+    },
+    {
+      "file": "viirs-snpp_2017_Portugal.csv",
+      "rows": 19184,
+      "type_counts": {
+        "0": 18779,
+        "2": 379,
+        "3": 26
+      }
+    },
+    {
+      "file": "viirs-snpp_2018_Portugal.csv",
+      "rows": 3827,
+      "type_counts": {
+        "0": 3469,
+        "2": 352,
+        "3": 6
+      }
+    },
+    {
+      "file": "viirs-snpp_2019_Portugal.csv",
+      "rows": 3794,
+      "type_counts": {
+        "0": 3473,
+        "2": 320,
+        "3": 1
+      }
+    },
+    {
+      "file": "viirs-snpp_2020_Portugal.csv",
+      "rows": 3769,
+      "type_counts": {
+        "0": 3474,
+        "2": 294,
+        "3": 1
+      }
+    },
+    {
+      "file": "viirs-snpp_2021_Portugal.csv",
+      "rows": 2591,
+      "type_counts": {
+        "0": 2327,
+        "2": 260,
+        "3": 4
+      }
+    },
+    {
+      "file": "viirs-snpp_2022_Portugal.csv",
+      "rows": 5079,
+      "type_counts": {
+        "0": 4892,
+        "2": 182,
+        "3": 5
+      }
+    },
+    {
+      "file": "viirs-snpp_2023_Portugal.csv",
+      "rows": 2953,
+      "type_counts": {
+        "0": 2695,
+        "2": 256,
+        "3": 2
+      }
+    },
+    {
+      "file": "viirs-snpp_2024_Portugal.csv",
+      "rows": 12078,
+      "type_counts": {
+        "0": 11872,
+        "2": 202,
+        "3": 4
+      }
+    },
+    {
+      "file": "viirs-snpp_2025_Portugal.csv",
+      "rows": 13600,
+      "type_counts": {
+        "0": 13330,
+        "2": 268,
+        "3": 2
+      }
+    }
+  ],
+  "counts": [
+    {
+      "year": 2000,
+      "sensor": "MODIS",
+      "satellite": "Terra",
+      "before": 3,
+      "after": 3
+    },
+    {
+      "year": 2001,
+      "sensor": "MODIS",
+      "satellite": "Terra",
+      "before": 1600,
+      "after": 1600
+    },
+    {
+      "year": 2002,
+      "sensor": "MODIS",
+      "satellite": "Aqua",
+      "before": 1262,
+      "after": 1262
+    },
+    {
+      "year": 2002,
+      "sensor": "MODIS",
+      "satellite": "Terra",
+      "before": 1383,
+      "after": 1383
+    },
+    {
+      "year": 2003,
+      "sensor": "MODIS",
+      "satellite": "Aqua",
+      "before": 3407,
+      "after": 3407
+    },
+    {
+      "year": 2003,
+      "sensor": "MODIS",
+      "satellite": "Terra",
+      "before": 2839,
+      "after": 2839
+    },
+    {
+      "year": 2004,
+      "sensor": "MODIS",
+      "satellite": "Aqua",
+      "before": 1717,
+      "after": 1717
+    },
+    {
+      "year": 2004,
+      "sensor": "MODIS",
+      "satellite": "Terra",
+      "before": 1325,
+      "after": 1325
+    },
+    {
+      "year": 2005,
+      "sensor": "MODIS",
+      "satellite": "Aqua",
+      "before": 4989,
+      "after": 4989
+    },
+    {
+      "year": 2005,
+      "sensor": "MODIS",
+      "satellite": "Terra",
+      "before": 4275,
+      "after": 4275
+    },
+    {
+      "year": 2006,
+      "sensor": "MODIS",
+      "satellite": "Aqua",
+      "before": 1477,
+      "after": 1477
+    },
+    {
+      "year": 2006,
+      "sensor": "MODIS",
+      "satellite": "Terra",
+      "before": 1175,
+      "after": 1175
+    },
+    {
+      "year": 2007,
+      "sensor": "MODIS",
+      "satellite": "Aqua",
+      "before": 912,
+      "after": 912
+    },
+    {
+      "year": 2007,
+      "sensor": "MODIS",
+      "satellite": "Terra",
+      "before": 673,
+      "after": 673
+    },
+    {
+      "year": 2008,
+      "sensor": "MODIS",
+      "satellite": "Aqua",
+      "before": 612,
+      "after": 612
+    },
+    {
+      "year": 2008,
+      "sensor": "MODIS",
+      "satellite": "Terra",
+      "before": 387,
+      "after": 387
+    },
+    {
+      "year": 2009,
+      "sensor": "MODIS",
+      "satellite": "Aqua",
+      "before": 3854,
+      "after": 3854
+    },
+    {
+      "year": 2009,
+      "sensor": "MODIS",
+      "satellite": "Terra",
+      "before": 3078,
+      "after": 3078
+    },
+    {
+      "year": 2010,
+      "sensor": "MODIS",
+      "satellite": "Aqua",
+      "before": 4450,
+      "after": 4450
+    },
+    {
+      "year": 2010,
+      "sensor": "MODIS",
+      "satellite": "Terra",
+      "before": 3982,
+      "after": 3982
+    },
+    {
+      "year": 2011,
+      "sensor": "MODIS",
+      "satellite": "Aqua",
+      "before": 3180,
+      "after": 3180
+    },
+    {
+      "year": 2011,
+      "sensor": "MODIS",
+      "satellite": "Terra",
+      "before": 2886,
+      "after": 2886
+    },
+    {
+      "year": 2012,
+      "sensor": "MODIS",
+      "satellite": "Aqua",
+      "before": 3880,
+      "after": 3880
+    },
+    {
+      "year": 2012,
+      "sensor": "MODIS",
+      "satellite": "Terra",
+      "before": 3224,
+      "after": 3224
+    },
+    {
+      "year": 2012,
+      "sensor": "VIIRS",
+      "satellite": "N",
+      "before": 9473,
+      "after": 9473
+    },
+    {
+      "year": 2013,
+      "sensor": "MODIS",
+      "satellite": "Aqua",
+      "before": 4804,
+      "after": 4804
+    },
+    {
+      "year": 2013,
+      "sensor": "MODIS",
+      "satellite": "Terra",
+      "before": 4072,
+      "after": 4072
+    },
+    {
+      "year": 2013,
+      "sensor": "VIIRS",
+      "satellite": "N",
+      "before": 12102,
+      "after": 12102
+    },
+    {
+      "year": 2014,
+      "sensor": "MODIS",
+      "satellite": "Aqua",
+      "before": 678,
+      "after": 678
+    },
+    {
+      "year": 2014,
+      "sensor": "MODIS",
+      "satellite": "Terra",
+      "before": 550,
+      "after": 550
+    },
+    {
+      "year": 2014,
+      "sensor": "VIIRS",
+      "satellite": "N",
+      "before": 2341,
+      "after": 2341
+    },
+    {
+      "year": 2015,
+      "sensor": "MODIS",
+      "satellite": "Aqua",
+      "before": 2106,
+      "after": 2106
+    },
+    {
+      "year": 2015,
+      "sensor": "MODIS",
+      "satellite": "Terra",
+      "before": 2010,
+      "after": 2010
+    },
+    {
+      "year": 2015,
+      "sensor": "VIIRS",
+      "satellite": "N",
+      "before": 5875,
+      "after": 5875
+    },
+    {
+      "year": 2016,
+      "sensor": "MODIS",
+      "satellite": "Aqua",
+      "before": 4922,
+      "after": 4922
+    },
+    {
+      "year": 2016,
+      "sensor": "MODIS",
+      "satellite": "Terra",
+      "before": 4680,
+      "after": 4680
+    },
+    {
+      "year": 2016,
+      "sensor": "VIIRS",
+      "satellite": "N",
+      "before": 13930,
+      "after": 13930
+    },
+    {
+      "year": 2017,
+      "sensor": "MODIS",
+      "satellite": "Aqua",
+      "before": 6026,
+      "after": 6026
+    },
+    {
+      "year": 2017,
+      "sensor": "MODIS",
+      "satellite": "Terra",
+      "before": 7264,
+      "after": 7264
+    },
+    {
+      "year": 2017,
+      "sensor": "VIIRS",
+      "satellite": "N",
+      "before": 19184,
+      "after": 19184
+    },
+    {
+      "year": 2018,
+      "sensor": "MODIS",
+      "satellite": "Aqua",
+      "before": 1394,
+      "after": 1394
+    },
+    {
+      "year": 2018,
+      "sensor": "MODIS",
+      "satellite": "Terra",
+      "before": 1226,
+      "after": 1226
+    },
+    {
+      "year": 2018,
+      "sensor": "VIIRS",
+      "satellite": "N",
+      "before": 3827,
+      "after": 3827
+    },
+    {
+      "year": 2018,
+      "sensor": "VIIRS",
+      "satellite": "N20",
+      "before": 3672,
+      "after": 3672
+    },
+    {
+      "year": 2019,
+      "sensor": "MODIS",
+      "satellite": "Aqua",
+      "before": 1362,
+      "after": 1362
+    },
+    {
+      "year": 2019,
+      "sensor": "MODIS",
+      "satellite": "Terra",
+      "before": 1176,
+      "after": 1176
+    },
+    {
+      "year": 2019,
+      "sensor": "VIIRS",
+      "satellite": "N",
+      "before": 3794,
+      "after": 3794
+    },
+    {
+      "year": 2019,
+      "sensor": "VIIRS",
+      "satellite": "N20",
+      "before": 3596,
+      "after": 3596
+    },
+    {
+      "year": 2020,
+      "sensor": "MODIS",
+      "satellite": "Aqua",
+      "before": 1350,
+      "after": 1350
+    },
+    {
+      "year": 2020,
+      "sensor": "MODIS",
+      "satellite": "Terra",
+      "before": 1348,
+      "after": 1348
+    },
+    {
+      "year": 2020,
+      "sensor": "VIIRS",
+      "satellite": "N",
+      "before": 3769,
+      "after": 3769
+    },
+    {
+      "year": 2020,
+      "sensor": "VIIRS",
+      "satellite": "N20",
+      "before": 3988,
+      "after": 3988
+    },
+    {
+      "year": 2021,
+      "sensor": "MODIS",
+      "satellite": "Aqua",
+      "before": 966,
+      "after": 966
+    },
+    {
+      "year": 2021,
+      "sensor": "MODIS",
+      "satellite": "Terra",
+      "before": 934,
+      "after": 934
+    },
+    {
+      "year": 2021,
+      "sensor": "VIIRS",
+      "satellite": "N",
+      "before": 2591,
+      "after": 2591
+    },
+    {
+      "year": 2021,
+      "sensor": "VIIRS",
+      "satellite": "N20",
+      "before": 2501,
+      "after": 2501
+    },
+    {
+      "year": 2022,
+      "sensor": "MODIS",
+      "satellite": "Aqua",
+      "before": 2224,
+      "after": 2224
+    },
+    {
+      "year": 2022,
+      "sensor": "MODIS",
+      "satellite": "Terra",
+      "before": 2322,
+      "after": 2322
+    },
+    {
+      "year": 2022,
+      "sensor": "VIIRS",
+      "satellite": "N",
+      "before": 5079,
+      "after": 5079
+    },
+    {
+      "year": 2022,
+      "sensor": "VIIRS",
+      "satellite": "N20",
+      "before": 5860,
+      "after": 5860
+    },
+    {
+      "year": 2023,
+      "sensor": "MODIS",
+      "satellite": "Aqua",
+      "before": 576,
+      "after": 576
+    },
+    {
+      "year": 2023,
+      "sensor": "MODIS",
+      "satellite": "Terra",
+      "before": 486,
+      "after": 486
+    },
+    {
+      "year": 2023,
+      "sensor": "VIIRS",
+      "satellite": "N",
+      "before": 2953,
+      "after": 2953
+    },
+    {
+      "year": 2023,
+      "sensor": "VIIRS",
+      "satellite": "N20",
+      "before": 3384,
+      "after": 3384
+    },
+    {
+      "year": 2024,
+      "sensor": "MODIS",
+      "satellite": "Aqua",
+      "before": 1504,
+      "after": 1504
+    },
+    {
+      "year": 2024,
+      "sensor": "MODIS",
+      "satellite": "Terra",
+      "before": 1647,
+      "after": 1647
+    },
+    {
+      "year": 2024,
+      "sensor": "VIIRS",
+      "satellite": "N",
+      "before": 12078,
+      "after": 12078
+    },
+    {
+      "year": 2024,
+      "sensor": "VIIRS",
+      "satellite": "N20",
+      "before": 12010,
+      "after": 12010
+    },
+    {
+      "year": 2025,
+      "sensor": "MODIS",
+      "satellite": "Aqua",
+      "before": 2408,
+      "after": 2408
+    },
+    {
+      "year": 2025,
+      "sensor": "MODIS",
+      "satellite": "Terra",
+      "before": 2459,
+      "after": 2459
+    },
+    {
+      "year": 2025,
+      "sensor": "VIIRS",
+      "satellite": "N",
+      "before": 13600,
+      "after": 13600
+    },
+    {
+      "year": 2025,
+      "sensor": "VIIRS",
+      "satellite": "N20",
+      "before": 13862,
+      "after": 13862
+    }
+  ]
+}
