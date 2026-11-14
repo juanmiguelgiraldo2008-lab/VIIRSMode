@@ -1,0 +1,11 @@
+body { margin: 0; background: #0a0a0f; color: #eee; font-family: Inter, system-ui, sans-serif; }
+.vm { max-width: 900px; margin: 0 auto; padding: 24px; }
+.vm h1 { margin: 0; }
+.vm-sub { color: #aaa; margin-top: 4px; }
+.vm-warn { color: #f5a623; font-size: 14px; }
+.cal { margin-top: 16px; }
+.cal-row { display: grid; grid-template-columns: 50px repeat(12, 1fr); gap: 3px; margin-bottom: 3px; }
+.cal-year, .cal-month { font-size: 12px; color: #aaa; text-align: center; }
+.cal-cell { height: 18px; border-radius: 3px; }
+.cal-legend { display: flex; align-items: center; gap: 8px; margin-top: 12px; font-size: 12px; color: #aaa; }
+.cal-legend-bar { width: 160px; height: 10px; border-radius: 3px; }
