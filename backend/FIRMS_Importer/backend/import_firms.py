@@ -82,7 +82,7 @@ def build_hotspots(input_dir=BACKEND / "data"):
         raise ValueError(f"No CSV files found in {input_dir}")
     # Finish validating all input before replacing any existing output.
     hotspots, report = read_files(paths)
-    csv_path = BACKEND.parent / "public" / "viirsmode" / "hotspots.csv"
+    csv_path = BACKEND.parents[2] / "public" / "viirsmode" / "hotspots.csv"
     csv_path.parent.mkdir(parents=True, exist_ok=True)
     json_path = BACKEND / "hotspots.json"
     json_path.write_text(json.dumps(hotspots, indent=2, allow_nan=False) + "\n", encoding="utf-8")
