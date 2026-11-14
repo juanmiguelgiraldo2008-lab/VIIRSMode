@@ -36,10 +36,16 @@ async function search() {
       error.value = 'Place not found';
       return;
     }
+    const [south, north, west, east] = list[0].boundingbox.map(Number);
+    const midLat = (south + north) / 2;
+    const halfLat = ((north - south) / 2) * 111;
+    const halfLon = ((east - west) / 2) * 111 * Math.cos((midLat * Math.PI) / 180);
+    const radiusKm = Math.min(400, Math.max(10, Math.round(Math.max(halfLat, halfLon))));
     emit('found', {
       lat: parseFloat(list[0].lat),
       lon: parseFloat(list[0].lon),
       name: list[0].display_name,
+      radiusKm,
     });
   } catch {
     error.value = 'Search failed. Try coordinates, like 40.4, -3.7';

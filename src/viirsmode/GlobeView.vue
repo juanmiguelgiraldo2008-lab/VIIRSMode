@@ -9,7 +9,7 @@ const props = defineProps({
 });
 const emit = defineEmits(['select']);
 
-const MAX_POINTS = 8000;
+const MAX_POINTS = 20000;
 const container = ref(null);
 const shown = ref(0);
 let viewer = null;
@@ -39,7 +39,7 @@ function drawArea() {
         b.east,
         b.north,
       ),
-      material: Cesium.Color.CYAN.withAlpha(0.15),
+      material: Cesium.Color.CYAN.withAlpha(0.03),
       outline: true,
       outlineColor: Cesium.Color.CYAN,
       height: 0,
@@ -59,10 +59,10 @@ function drawHotspots() {
     points.add({
       id: h,
       position: Cesium.Cartesian3.fromDegrees(h.lon, h.lat, 100),
-      pixelSize: 6,
+      pixelSize: 4,
       color: h.sensor === 'MODIS' ? Cesium.Color.YELLOW : Cesium.Color.RED,
       outlineColor: Cesium.Color.BLACK.withAlpha(0.6),
-      outlineWidth: 1,
+      outlineWidth: 0.5,
     });
     count++;
   }

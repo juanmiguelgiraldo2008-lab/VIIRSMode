@@ -33,6 +33,8 @@ export function parseHotspotsCsv(text) {
     const lat = Number(p[idx.lat]);
     const lon = Number(p[idx.lon]);
     const frp = idx.frp === undefined ? undefined : Number(p[idx.frp]);
+    const weightRaw = idx.weight === undefined ? NaN : Number(p[idx.weight]);
+    const weight = Number.isFinite(weightRaw) && weightRaw > 0 ? weightRaw : 1;
     if (
       !Number.isFinite(lat) ||
       lat < -90 ||
@@ -51,6 +53,7 @@ export function parseHotspotsCsv(text) {
       sensor: idx.sensor === undefined ? undefined : p[idx.sensor],
       satellite: idx.satellite === undefined ? undefined : p[idx.satellite],
       frp,
+      weight,
     });
   }
   return out;
@@ -68,6 +71,15 @@ export function areaBbox({ lat, lon, radiusKm }) {
     north: lat + dLat,
   };
 }
+
+export function filterByYears(hotspots, fromYear, toYear) {
+  return hotspots.filter((h) => {
+    const y = Number(h.date.slice(0, 4));
+    return y >= fromYear && y <= toYear;
+  });
+}
+
+
 
 export function filterHotspots(hotspots, area, fromYear, toYear) {
   const b = areaBbox(area);
@@ -88,12 +100,12 @@ export function monthlyCounts(hotspots, fromYear, toYear) {
   const map = new Map();
   for (const h of hotspots) {
     const key = `${Number(h.date.slice(0, 4))}-${Number(h.date.slice(5, 7))}`;
-    map.set(key, (map.get(key) || 0) + 1);
+    map.set(key, (map.get(key) || 0) + (h.weight ?? 1));
   }
   const months = [];
   for (let year = fromYear; year <= toYear; year++) {
     for (let month = 1; month <= 12; month++) {
-      months.push({ year, month, count: map.get(`${year}-${month}`) || 0 });
+      months.push({ year, month, count: Math.round(map.get(`${year}-${month}`) || 0) });
     }
   }
   return months;
@@ -118,10 +130,10 @@ export function compareMonth(months, year, month) {
 }
 
 export function hotspotsToCsv(hotspots) {
-  const header = 'lat,lon,date,sensor,satellite,frp';
+  const header = 'lat,lon,date,sensor,satellite,frp,weight';
   const rows = hotspots.map(
     (h) =>
-      `${h.lat},${h.lon},${h.date},${h.sensor ?? ''},${h.satellite ?? ''},${h.frp ?? ''}`,
+      `${h.lat},${h.lon},${h.date},${h.sensor ?? ''},${h.satellite ?? ''},${h.frp ?? ''},${h.weight ?? ''}`,
   );
   return [header, ...rows].join('\n');
 }

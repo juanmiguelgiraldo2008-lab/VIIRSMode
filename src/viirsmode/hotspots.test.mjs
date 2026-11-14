@@ -13,17 +13,18 @@ test('parseHotspotsCsv maps normalized FIRMS values to numeric coordinates and F
     sensor: 'MODIS',
     satellite: 'Terra',
     frp: 4.9,
+    weight: 1,
   });
 });
 
 test('parseHotspotsCsv skips malformed and out-of-range detections', () => {
   const rows = parseHotspotsCsv(
     [
-      'lat,lon,date,sensor,satellite,frp',
-      '91,-8,2020-01-01,MODIS,Terra,1',
-      '39,-8,2020-01-01,MODIS,Terra,not-a-number',
-      '39,-8,not-a-date,MODIS,Terra,1',
-      '39,-8,2020-01-01,MODIS,Terra,1',
+      'lat,lon,date,sensor,satellite,frp,weight',
+      '91,-8,2020-01-01,MODIS,Terra,1,1',
+      '39,-8,2020-01-01,MODIS,Terra,not-a-number,1',
+      '39,-8,not-a-date,MODIS,Terra,1,1',
+      '39,-8,2020-01-01,MODIS,Terra,1,1',
     ].join('\n'),
   );
   assert.equal(rows.length, 1);

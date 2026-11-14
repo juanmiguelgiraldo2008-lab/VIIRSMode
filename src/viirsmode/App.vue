@@ -6,6 +6,7 @@ import InfoPanel from './InfoPanel.vue';
 import {
   parseHotspotsCsv,
   filterHotspots,
+  filterByYears,
   monthlyCounts,
   hotspotsToCsv,
   downloadText,
@@ -14,29 +15,48 @@ import {
 const hotspots = shallowRef([]);
 const hotspotError = ref('');
 const area = reactive({ lat: 39.5, lon: -8, radiusKm: 150 });
-const range = reactive({ from: 2000, to: 2025 });
+const range = reactive({ from: 2025, to: 2025 });
 const globe = ref(null);
 const panelOpen = ref(false);
 const selection = ref(null);
+
+const yearBounds = computed(() => {
+  let min = Infinity;
+  let max = -Infinity;
+  for (const h of hotspots.value) {
+    const y = Number(h.date.slice(0, 4));
+    if (y < min) min = y;
+    if (y > max) max = y;
+  }
+  return Number.isFinite(min) ? { min, max } : { min: 2000, max: 2025 };
+});
 
 onMounted(async () => {
   try {
     const res = await fetch('/viirsmode/hotspots.csv');
     if (!res.ok) throw new Error(`Hotspot CSV request failed (${res.status})`);
     const parsed = parseHotspotsCsv(await res.text());
-    if (!parsed.length)
-      throw new Error('Hotspot CSV contains no valid detections');
+    if (!parsed.length) throw new Error('Hotspot CSV contains no valid detections');
     hotspots.value = parsed;
+    range.from = yearBounds.value.max;
+    range.to = yearBounds.value.max;
   } catch (error) {
     hotspotError.value = error instanceof Error ? error.message : String(error);
   }
 });
 
-const filtered = computed(() =>
-  filterHotspots(hotspots.value, area, range.from, range.to),
+// Map: every hotspot of the selected years, anywhere
+const visible = computed(() => filterByYears(hotspots.value, range.from, range.to));
+// Calendar: the selected area across the full history
+const areaAllYears = computed(() =>
+  filterHotspots(hotspots.value, area, yearBounds.value.min, yearBounds.value.max),
 );
 const months = computed(() =>
-  monthlyCounts(filtered.value, range.from, range.to),
+  monthlyCounts(areaAllYears.value, yearBounds.value.min, yearBounds.value.max),
+);
+// CSV: selected area and selected years
+const exportRows = computed(() =>
+  filterByYears(areaAllYears.value, range.from, range.to),
 );
 
 function setArea(lat, lon) {
@@ -46,12 +66,14 @@ function setArea(lat, lon) {
 
 function onGlobeSelect({ lat, lon, hotspot }) {
   setArea(lat, lon);
+  if (hotspot) area.radiusKm = 50;
   selection.value = { lat, lon, name: null, hotspot };
   panelOpen.value = true;
 }
 
-function onFound({ lat, lon, name }) {
+function onFound({ lat, lon, name, radiusKm }) {
   setArea(lat, lon);
+  if (radiusKm) area.radiusKm = radiusKm;
   selection.value = { lat, lon, name, hotspot: null };
   panelOpen.value = true;
   globe.value?.flyToArea();
@@ -60,26 +82,19 @@ function onFound({ lat, lon, name }) {
 function download() {
   downloadText(
     `viirsmode_hotspots_${range.from}-${range.to}.csv`,
-    hotspotsToCsv(filtered.value),
+    hotspotsToCsv(exportRows.value),
   );
 }
 </script>
 
 <template>
   <div class="vm-root">
-    <GlobeView
-      ref="globe"
-      :area="area"
-      :hotspots="filtered"
-      @select="onGlobeSelect"
-    />
+    <GlobeView ref="globe" :area="area" :hotspots="visible" @select="onGlobeSelect" />
 
     <header class="vm-brand">
       <h1>ViirsMode</h1>
       <p>Burning activity calendar · harmonized MODIS + VIIRS</p>
-      <p v-if="hotspotError" class="vm-warn"
-        >Hotspot data unavailable: {{ hotspotError }}</p
-      >
+      <p v-if="hotspotError" class="vm-warn">Hotspot data unavailable: {{ hotspotError }}</p>
     </header>
 
     <SearchBar :area="area" :range="range" @found="onFound" />
@@ -88,7 +103,7 @@ function download() {
       v-if="panelOpen"
       :selection="selection"
       :months="months"
-      :count="filtered.length"
+      :count="exportRows.length"
       :range="range"
       @close="panelOpen = false"
       @download="download"

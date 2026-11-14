@@ -8,7 +8,7 @@ from itertools import product
 from datetime import date
 from pathlib import Path
 
-FIELDS = ["lat", "lon", "date", "sensor", "satellite", "frp"]
+FIELDS = ["lat", "lon", "date", "sensor", "satellite", "frp", "weight"]
 REQUIRED = {"latitude", "longitude", "acq_date", "instrument", "satellite", "frp"}
 SATELLITES = {"TERRA": ("Terra", "MODIS"), "AQUA": ("Aqua", "MODIS"),
               "N": ("N", "VIIRS"), "S-NPP": ("N", "VIIRS"),
@@ -135,6 +135,36 @@ def merge_hotspots(rows, radius_km=1.0, frp_ratio=2.0, frp_absolute=2.0):
     return [group for group, _ in groups]
 
 
+def harmonization_weights(groups):
+    """Weight per year so counts are comparable to the MODIS-only record.
+
+    Years are grouped by era (same set of VIIRS satellites). In an era with VIIRS,
+    weight = groups containing MODIS / all groups, so the era total matches what
+    MODIS alone would have shown. Years before VIIRS keep weight 1.
+    """
+    years = defaultdict(lambda: dict(total=0, modis=0, sats=set()))
+    for g in groups:
+        year = g["date"][:4]
+        sensors = g.get("sensors", [g["sensor"]])
+        years[year]["total"] += 1
+        years[year]["modis"] += "MODIS" in sensors
+        years[year]["sats"].update(g.get("satellites", [g["satellite"]]))
+    eras = defaultdict(list)
+    for year, data in years.items():
+        viirs = frozenset(s for s in data["sats"] if s not in ("Terra", "Aqua"))
+        eras[viirs].append(year)
+    weights, report = {}, []
+    for viirs, era_years in sorted(eras.items(), key=lambda kv: min(kv[1])):
+        total = sum(years[y]["total"] for y in era_years)
+        modis = sum(years[y]["modis"] for y in era_years)
+        weight = modis / total if viirs and total and modis else 1.0
+        for year in era_years:
+            weights[year] = round(weight, 4)
+        report.append(dict(viirs_satellites=sorted(viirs), years=sorted(era_years),
+                           groups=total, modis_groups=modis, weight=round(weight, 4)))
+    return weights, report
+
+
 def build_hotspots(input_dir=BACKEND / "data", *, merge=True, radius_km=1.0,
                    frp_ratio=2.0, frp_absolute=2.0):
     """Rebuild both app outputs from all CSV files in input_dir and its subfolders."""
@@ -147,6 +177,10 @@ def build_hotspots(input_dir=BACKEND / "data", *, merge=True, radius_km=1.0,
     original = hotspots
     if merge:
         hotspots = merge_hotspots(original, radius_km, frp_ratio, frp_absolute)
+
+    weights, harmonization = harmonization_weights(hotspots)
+    for row in hotspots:
+        row["weight"] = weights[row["date"][:4]]
     before = Counter(r['date'][:4] for r in original)
     after = Counter(r['date'][:4] for r in hotspots)
     # Original sensor counts remain raw counts: mixed groups cannot be assigned
@@ -161,6 +195,8 @@ def build_hotspots(input_dir=BACKEND / "data", *, merge=True, radius_km=1.0,
                                   frp_absolute_mw=frp_absolute) if merge else None,
                   counts_by_year=[dict(year=int(y), before=before[y], after=after[y])
                                   for y in sorted(before)])
+
+    report["harmonization"] = harmonization
     csv_path = BACKEND.parents[2] / "public" / "viirsmode" / "hotspots.csv"
     csv_path.parent.mkdir(parents=True, exist_ok=True)
     json_path = BACKEND / "hotspots.json"
