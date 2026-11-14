@@ -61,13 +61,27 @@ async function search() {
       <button type="button" :disabled="busy" @click="search">Go</button>
     </div>
     <div class="search-opts">
-      <label>Radius (km)
-        <input type="number" min="10" max="1000" step="10" v-model.number="area.radiusKm" />
+      <label
+        >Radius (km)
+        <input
+          type="number"
+          min="10"
+          max="1000"
+          step="10"
+          v-model.number="area.radiusKm"
+        />
       </label>
-      <label>From year
-        <input type="number" min="2000" max="2026" v-model.number="range.from" />
+      <label
+        >From year
+        <input
+          type="number"
+          min="2000"
+          max="2026"
+          v-model.number="range.from"
+        />
       </label>
-      <label>To year
+      <label
+        >To year
         <input type="number" min="2000" max="2026" v-model.number="range.to" />
       </label>
     </div>

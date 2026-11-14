@@ -5,7 +5,20 @@ const props = defineProps({
   months: { type: Array, required: true },
 });
 
-const MONTH_NAMES = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const MONTH_NAMES = [
+  'Jan',
+  'Feb',
+  'Mar',
+  'Apr',
+  'May',
+  'Jun',
+  'Jul',
+  'Aug',
+  'Sep',
+  'Oct',
+  'Nov',
+  'Dec',
+];
 // Viridis-like ramp (readable for most color-blind users)
 const STOPS = ['#440154', '#3b528b', '#21908d', '#5dc863', '#fde725'];
 
@@ -45,7 +58,9 @@ function countFor(year, month) {
   <div class="cal">
     <div class="cal-row cal-head">
       <span class="cal-year"></span>
-      <span v-for="name in MONTH_NAMES" :key="name" class="cal-month">{{ name }}</span>
+      <span v-for="name in MONTH_NAMES" :key="name" class="cal-month">{{
+        name
+      }}</span>
     </div>
     <div v-for="year in years" :key="year" class="cal-row">
       <span class="cal-year">{{ year }}</span>
@@ -61,7 +76,9 @@ function countFor(year, month) {
       <span>Fewer hotspots</span>
       <span
         class="cal-legend-bar"
-        :style="{ background: `linear-gradient(to right, ${STOPS.join(', ')})` }"
+        :style="{
+          background: `linear-gradient(to right, ${STOPS.join(', ')})`,
+        }"
       ></span>
       <span>More ({{ maxCount }})</span>
     </div>

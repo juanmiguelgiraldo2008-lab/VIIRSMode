@@ -2,26 +2,44 @@
 export function parseHotspotsCsv(text) {
   const lines = text.trim().split(/\r?\n/);
   if (!lines[0]) return [];
-  const header = lines[0].replace(/^\uFEFF/, '').split(',').map((h) => h.trim());
+  const header = lines[0]
+    .replace(/^\uFEFF/, '')
+    .split(',')
+    .map((h) => h.trim());
   const idx = Object.fromEntries(header.map((h, i) => [h, i]));
-  if (idx.lat === undefined || idx.lon === undefined || idx.date === undefined) {
+  if (
+    idx.lat === undefined ||
+    idx.lon === undefined ||
+    idx.date === undefined
+  ) {
     return [];
   }
   const out = [];
   for (let i = 1; i < lines.length; i++) {
     const p = lines[i].split(',').map((value) => value.trim());
-    if (p.length !== header.length || !/^\d{4}-\d{2}-\d{2}$/.test(p[idx.date] ?? '')) {
+    if (
+      p.length !== header.length ||
+      !/^\d{4}-\d{2}-\d{2}$/.test(p[idx.date] ?? '')
+    ) {
       continue;
     }
-    if (p[idx.lat] === '' || p[idx.lon] === '' || (idx.frp !== undefined && p[idx.frp] === '')) {
+    if (
+      p[idx.lat] === '' ||
+      p[idx.lon] === '' ||
+      (idx.frp !== undefined && p[idx.frp] === '')
+    ) {
       continue;
     }
     const lat = Number(p[idx.lat]);
     const lon = Number(p[idx.lon]);
     const frp = idx.frp === undefined ? undefined : Number(p[idx.frp]);
     if (
-      !Number.isFinite(lat) || lat < -90 || lat > 90 ||
-      !Number.isFinite(lon) || lon < -180 || lon > 180 ||
+      !Number.isFinite(lat) ||
+      lat < -90 ||
+      lat > 90 ||
+      !Number.isFinite(lon) ||
+      lon < -180 ||
+      lon > 180 ||
       (frp !== undefined && (!Number.isFinite(frp) || frp < 0))
     ) {
       continue;
@@ -41,8 +59,14 @@ export function parseHotspotsCsv(text) {
 // Square area around a point (radius in km)
 export function areaBbox({ lat, lon, radiusKm }) {
   const dLat = radiusKm / 111;
-  const dLon = radiusKm / (111 * Math.max(0.1, Math.cos((lat * Math.PI) / 180)));
-  return { west: lon - dLon, east: lon + dLon, south: lat - dLat, north: lat + dLat };
+  const dLon =
+    radiusKm / (111 * Math.max(0.1, Math.cos((lat * Math.PI) / 180)));
+  return {
+    west: lon - dLon,
+    east: lon + dLon,
+    south: lat - dLat,
+    north: lat + dLat,
+  };
 }
 
 export function filterHotspots(hotspots, area, fromYear, toYear) {
@@ -50,9 +74,12 @@ export function filterHotspots(hotspots, area, fromYear, toYear) {
   return hotspots.filter((h) => {
     const y = Number(h.date.slice(0, 4));
     return (
-      y >= fromYear && y <= toYear &&
-      h.lat >= b.south && h.lat <= b.north &&
-      h.lon >= b.west && h.lon <= b.east
+      y >= fromYear &&
+      y <= toYear &&
+      h.lat >= b.south &&
+      h.lat <= b.north &&
+      h.lon >= b.west &&
+      h.lon <= b.east
     );
   });
 }
@@ -93,7 +120,8 @@ export function compareMonth(months, year, month) {
 export function hotspotsToCsv(hotspots) {
   const header = 'lat,lon,date,sensor,satellite,frp';
   const rows = hotspots.map(
-    (h) => `${h.lat},${h.lon},${h.date},${h.sensor ?? ''},${h.satellite ?? ''},${h.frp ?? ''}`,
+    (h) =>
+      `${h.lat},${h.lon},${h.date},${h.sensor ?? ''},${h.satellite ?? ''},${h.frp ?? ''}`,
   );
   return [header, ...rows].join('\n');
 }

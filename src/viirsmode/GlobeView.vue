@@ -33,7 +33,12 @@ function drawArea() {
   });
   viewer.entities.add({
     rectangle: {
-      coordinates: Cesium.Rectangle.fromDegrees(b.west, b.south, b.east, b.north),
+      coordinates: Cesium.Rectangle.fromDegrees(
+        b.west,
+        b.south,
+        b.east,
+        b.north,
+      ),
       material: Cesium.Color.CYAN.withAlpha(0.15),
       outline: true,
       outlineColor: Cesium.Color.CYAN,
@@ -106,7 +111,11 @@ onMounted(() => {
   points = viewer.scene.primitives.add(new Cesium.PointPrimitiveCollection());
 
   viewer.camera.setView({
-    destination: Cesium.Cartesian3.fromDegrees(props.area.lon, props.area.lat, 1800000),
+    destination: Cesium.Cartesian3.fromDegrees(
+      props.area.lon,
+      props.area.lat,
+      1800000,
+    ),
   });
   drawArea();
   drawHotspots();
@@ -119,7 +128,10 @@ onMounted(() => {
       emit('select', { lat: hotspot.lat, lon: hotspot.lon, hotspot });
       return;
     }
-    const cartesian = viewer.camera.pickEllipsoid(click.position, viewer.scene.globe.ellipsoid);
+    const cartesian = viewer.camera.pickEllipsoid(
+      click.position,
+      viewer.scene.globe.ellipsoid,
+    );
     if (!cartesian) return;
     const c = Cesium.Cartographic.fromCartesian(cartesian);
     emit('select', {
@@ -145,14 +157,22 @@ onBeforeUnmount(() => {
     <div class="globe-legend">
       <span><i class="dot modis"></i> MODIS</span>
       <span><i class="dot viirs"></i> VIIRS</span>
-      <span class="globe-count">{{ shown }} of {{ hotspots.length }} shown</span>
+      <span class="globe-count"
+        >{{ shown }} of {{ hotspots.length }} shown</span
+      >
     </div>
   </div>
 </template>
 
 <style scoped>
-.globe-wrap { position: absolute; inset: 0; }
-.globe { position: absolute; inset: 0; }
+.globe-wrap {
+  position: absolute;
+  inset: 0;
+}
+.globe {
+  position: absolute;
+  inset: 0;
+}
 .globe-legend {
   position: absolute;
   top: 96px;
@@ -174,7 +194,13 @@ onBeforeUnmount(() => {
   border-radius: 50%;
   margin-right: 4px;
 }
-.dot.modis { background: #ffeb3b; }
-.dot.viirs { background: #ff1744; }
-.globe-count { color: #aaa; }
+.dot.modis {
+  background: #ffeb3b;
+}
+.dot.viirs {
+  background: #ff1744;
+}
+.globe-count {
+  color: #aaa;
+}
 </style>
