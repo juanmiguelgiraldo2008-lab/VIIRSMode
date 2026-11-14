@@ -20,6 +20,17 @@ SATELLITES = {"TERRA": ("Terra", "MODIS"), "AQUA": ("Aqua", "MODIS"),
 BACKEND = Path(__file__).resolve().parent
 
 
+def unique_files(paths):
+    """Skip files whose name was already seen (duplicate copies in other folders)."""
+    seen, unique = set(), []
+    for path in paths:
+        if path.name in seen:
+            print(f"Skipping duplicate file: {path}")
+            continue
+        seen.add(path.name)
+        unique.append(path)
+    return unique
+
 def normalize(row):
     """Map one CSV record to one hotspot; fail on invalid required values."""
     lat, lon, frp = (float(row[key]) for key in ("latitude", "longitude", "frp"))
