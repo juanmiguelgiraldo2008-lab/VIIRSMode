@@ -1,11 +1,10 @@
 {
-  "mode": "schema normalization + type filter (kept types: ['', '0']); no deduplication of detections",
-  "total": 229073,
+  "mode": "daily proximity and FRP grouping",
+  "total": 109513,
   "files": [
     {
       "file": "modis_2000_Portugal.csv",
       "rows": 3,
-      "kept": 3,
       "type_counts": {
         "0": 3
       }
@@ -13,7 +12,6 @@
     {
       "file": "modis_2001_Portugal.csv",
       "rows": 1600,
-      "kept": 1599,
       "type_counts": {
         "0": 1599,
         "3": 1
@@ -22,7 +20,6 @@
     {
       "file": "modis_2002_Portugal.csv",
       "rows": 2645,
-      "kept": 2645,
       "type_counts": {
         "0": 2645
       }
@@ -30,7 +27,6 @@
     {
       "file": "modis_2003_Portugal.csv",
       "rows": 6246,
-      "kept": 6246,
       "type_counts": {
         "0": 6246
       }
@@ -38,7 +34,6 @@
     {
       "file": "modis_2004_Portugal.csv",
       "rows": 3042,
-      "kept": 3040,
       "type_counts": {
         "0": 3040,
         "3": 2
@@ -47,7 +42,6 @@
     {
       "file": "modis_2005_Portugal.csv",
       "rows": 9264,
-      "kept": 9263,
       "type_counts": {
         "0": 9263,
         "3": 1
@@ -56,7 +50,6 @@
     {
       "file": "modis_2006_Portugal.csv",
       "rows": 2652,
-      "kept": 2650,
       "type_counts": {
         "0": 2650,
         "3": 2
@@ -65,7 +58,6 @@
     {
       "file": "modis_2007_Portugal.csv",
       "rows": 1585,
-      "kept": 1585,
       "type_counts": {
         "0": 1585
       }
@@ -73,7 +65,6 @@
     {
       "file": "modis_2008_Portugal.csv",
       "rows": 999,
-      "kept": 999,
       "type_counts": {
         "0": 999
       }
@@ -81,7 +72,6 @@
     {
       "file": "modis_2009_Portugal.csv",
       "rows": 3466,
-      "kept": 3466,
       "type_counts": {
         "0": 3466
       }
@@ -89,7 +79,6 @@
     {
       "file": "modis_2010_Portugal.csv",
       "rows": 4216,
-      "kept": 4207,
       "type_counts": {
         "0": 4207,
         "1": 9
@@ -98,7 +87,6 @@
     {
       "file": "modis_2011_Portugal.csv",
       "rows": 3033,
-      "kept": 3032,
       "type_counts": {
         "0": 3032,
         "3": 1
@@ -107,7 +95,6 @@
     {
       "file": "modis_2012_Portugal.csv",
       "rows": 3552,
-      "kept": 3544,
       "type_counts": {
         "0": 3544,
         "1": 1,
@@ -117,7 +104,6 @@
     {
       "file": "modis_2013_Portugal.csv",
       "rows": 4438,
-      "kept": 4437,
       "type_counts": {
         "0": 4437,
         "3": 1
@@ -126,7 +112,6 @@
     {
       "file": "modis_2014_Portugal.csv",
       "rows": 614,
-      "kept": 613,
       "type_counts": {
         "0": 613,
         "3": 1
@@ -135,7 +120,6 @@
     {
       "file": "modis_2015_Portugal.csv",
       "rows": 2058,
-      "kept": 2058,
       "type_counts": {
         "0": 2058
       }
@@ -143,7 +127,6 @@
     {
       "file": "modis_2016_Portugal.csv",
       "rows": 4801,
-      "kept": 4800,
       "type_counts": {
         "0": 4800,
         "3": 1
@@ -152,7 +135,6 @@
     {
       "file": "modis_2017_Portugal.csv",
       "rows": 6645,
-      "kept": 6638,
       "type_counts": {
         "0": 6638,
         "3": 7
@@ -161,7 +143,6 @@
     {
       "file": "modis_2018_Portugal.csv",
       "rows": 1310,
-      "kept": 1286,
       "type_counts": {
         "0": 1286,
         "2": 22,
@@ -171,7 +152,6 @@
     {
       "file": "modis_2019_Portugal.csv",
       "rows": 1269,
-      "kept": 1238,
       "type_counts": {
         "0": 1238,
         "2": 31
@@ -180,7 +160,6 @@
     {
       "file": "modis_2020_Portugal.csv",
       "rows": 1349,
-      "kept": 1323,
       "type_counts": {
         "0": 1323,
         "2": 25,
@@ -190,7 +169,6 @@
     {
       "file": "modis_2021_Portugal.csv",
       "rows": 950,
-      "kept": 944,
       "type_counts": {
         "0": 944,
         "2": 5,
@@ -200,7 +178,6 @@
     {
       "file": "modis_2022_Portugal.csv",
       "rows": 2273,
-      "kept": 2258,
       "type_counts": {
         "0": 2258,
         "2": 14,
@@ -210,7 +187,6 @@
     {
       "file": "modis_2023_Portugal.csv",
       "rows": 1062,
-      "kept": 1049,
       "type_counts": {
         "0": 1049,
         "2": 13
@@ -219,7 +195,6 @@
     {
       "file": "modis_2024_Portugal.csv",
       "rows": 3151,
-      "kept": 3107,
       "type_counts": {
         "0": 3107,
         "2": 43,
@@ -229,16 +204,129 @@
     {
       "file": "modis_2025_Portugal.csv",
       "rows": 4867,
-      "kept": 4853,
       "type_counts": {
         "0": 4853,
         "2": 14
       }
     },
     {
+      "file": "modis_2009_Portugal.csv",
+      "rows": 3466,
+      "type_counts": {
+        "0": 3466
+      }
+    },
+    {
+      "file": "modis_2010_Portugal.csv",
+      "rows": 4216,
+      "type_counts": {
+        "0": 4207,
+        "1": 9
+      }
+    },
+    {
+      "file": "modis_2011_Portugal.csv",
+      "rows": 3033,
+      "type_counts": {
+        "0": 3032,
+        "3": 1
+      }
+    },
+    {
+      "file": "modis_2012_Portugal.csv",
+      "rows": 3552,
+      "type_counts": {
+        "0": 3544,
+        "1": 1,
+        "3": 7
+      }
+    },
+    {
+      "file": "modis_2013_Portugal.csv",
+      "rows": 4438,
+      "type_counts": {
+        "0": 4437,
+        "3": 1
+      }
+    },
+    {
+      "file": "modis_2014_Portugal.csv",
+      "rows": 614,
+      "type_counts": {
+        "0": 613,
+        "3": 1
+      }
+    },
+    {
+      "file": "modis_2015_Portugal.csv",
+      "rows": 2058,
+      "type_counts": {
+        "0": 2058
+      }
+    },
+    {
+      "file": "modis_2016_Portugal.csv",
+      "rows": 4801,
+      "type_counts": {
+        "0": 4800,
+        "3": 1
+      }
+    },
+    {
+      "file": "modis_2017_Portugal.csv",
+      "rows": 6645,
+      "type_counts": {
+        "0": 6638,
+        "3": 7
+      }
+    },
+    {
+      "file": "modis_2018_Portugal.csv",
+      "rows": 1310,
+      "type_counts": {
+        "0": 1286,
+        "2": 22,
+        "3": 2
+      }
+    },
+    {
+      "file": "modis_2019_Portugal.csv",
+      "rows": 1269,
+      "type_counts": {
+        "0": 1238,
+        "2": 31
+      }
+    },
+    {
+      "file": "modis_2020_Portugal.csv",
+      "rows": 1349,
+      "type_counts": {
+        "0": 1323,
+        "2": 25,
+        "3": 1
+      }
+    },
+    {
+      "file": "modis_2021_Portugal.csv",
+      "rows": 950,
+      "type_counts": {
+        "0": 944,
+        "2": 5,
+        "3": 1
+      }
+    },
+    {
+      "file": "modis_2022_Portugal.csv",
+      "rows": 2273,
+      "type_counts": {
+        "0": 2258,
+        "2": 14,
+        "3": 1
+      }
+    },
+    {
       "file": "viirs-jpss1_2018_Portugal.csv",
       "rows": 3672,
-      "kept": 3361,
       "type_counts": {
         "0": 3361,
         "2": 304,
@@ -248,7 +336,6 @@
     {
       "file": "viirs-jpss1_2019_Portugal.csv",
       "rows": 3596,
-      "kept": 3254,
       "type_counts": {
         "0": 3254,
         "2": 336,
@@ -258,7 +345,6 @@
     {
       "file": "viirs-jpss1_2020_Portugal.csv",
       "rows": 3988,
-      "kept": 3677,
       "type_counts": {
         "0": 3677,
         "2": 311
@@ -267,7 +353,6 @@
     {
       "file": "viirs-jpss1_2021_Portugal.csv",
       "rows": 2501,
-      "kept": 2242,
       "type_counts": {
         "0": 2242,
         "2": 256,
@@ -277,7 +362,6 @@
     {
       "file": "viirs-jpss1_2022_Portugal.csv",
       "rows": 5860,
-      "kept": 5653,
       "type_counts": {
         "0": 5653,
         "2": 205,
@@ -287,7 +371,6 @@
     {
       "file": "viirs-jpss1_2023_Portugal.csv",
       "rows": 3384,
-      "kept": 3105,
       "type_counts": {
         "0": 3105,
         "2": 277,
@@ -297,7 +380,6 @@
     {
       "file": "viirs-jpss1_2024_Portugal.csv",
       "rows": 12010,
-      "kept": 11767,
       "type_counts": {
         "0": 11767,
         "2": 240,
@@ -307,7 +389,6 @@
     {
       "file": "viirs-jpss1_2025_Portugal.csv",
       "rows": 13862,
-      "kept": 13521,
       "type_counts": {
         "0": 13521,
         "2": 339,
@@ -317,7 +398,6 @@
     {
       "file": "viirs-snpp_2012_Portugal.csv",
       "rows": 9473,
-      "kept": 9074,
       "type_counts": {
         "0": 9074,
         "2": 390,
@@ -327,7 +407,6 @@
     {
       "file": "viirs-snpp_2013_Portugal.csv",
       "rows": 12102,
-      "kept": 11486,
       "type_counts": {
         "0": 11486,
         "2": 602,
@@ -337,7 +416,6 @@
     {
       "file": "viirs-snpp_2014_Portugal.csv",
       "rows": 2341,
-      "kept": 1816,
       "type_counts": {
         "0": 1816,
         "2": 518,
@@ -347,7 +425,6 @@
     {
       "file": "viirs-snpp_2015_Portugal.csv",
       "rows": 5875,
-      "kept": 5404,
       "type_counts": {
         "0": 5404,
         "2": 467,
@@ -357,7 +434,6 @@
     {
       "file": "viirs-snpp_2016_Portugal.csv",
       "rows": 13930,
-      "kept": 13519,
       "type_counts": {
         "0": 13519,
         "2": 403,
@@ -367,7 +443,6 @@
     {
       "file": "viirs-snpp_2017_Portugal.csv",
       "rows": 19184,
-      "kept": 18779,
       "type_counts": {
         "0": 18779,
         "2": 379,
@@ -377,7 +452,6 @@
     {
       "file": "viirs-snpp_2018_Portugal.csv",
       "rows": 3827,
-      "kept": 3469,
       "type_counts": {
         "0": 3469,
         "2": 352,
@@ -387,7 +461,6 @@
     {
       "file": "viirs-snpp_2019_Portugal.csv",
       "rows": 3794,
-      "kept": 3473,
       "type_counts": {
         "0": 3473,
         "2": 320,
@@ -397,7 +470,6 @@
     {
       "file": "viirs-snpp_2020_Portugal.csv",
       "rows": 3769,
-      "kept": 3474,
       "type_counts": {
         "0": 3474,
         "2": 294,
@@ -407,7 +479,6 @@
     {
       "file": "viirs-snpp_2021_Portugal.csv",
       "rows": 2591,
-      "kept": 2327,
       "type_counts": {
         "0": 2327,
         "2": 260,
@@ -417,7 +488,6 @@
     {
       "file": "viirs-snpp_2022_Portugal.csv",
       "rows": 5079,
-      "kept": 4892,
       "type_counts": {
         "0": 4892,
         "2": 182,
@@ -427,7 +497,6 @@
     {
       "file": "viirs-snpp_2023_Portugal.csv",
       "rows": 2953,
-      "kept": 2695,
       "type_counts": {
         "0": 2695,
         "2": 256,
@@ -437,7 +506,6 @@
     {
       "file": "viirs-snpp_2024_Portugal.csv",
       "rows": 12078,
-      "kept": 11872,
       "type_counts": {
         "0": 11872,
         "2": 202,
@@ -447,7 +515,6 @@
     {
       "file": "viirs-snpp_2025_Portugal.csv",
       "rows": 13600,
-      "kept": 13330,
       "type_counts": {
         "0": 13330,
         "2": 268,
@@ -455,510 +522,577 @@
       }
     }
   ],
-  "counts": [
+  "raw_counts": [
     {
       "year": 2000,
       "sensor": "MODIS",
       "satellite": "Terra",
-      "before": 3,
-      "after": 3
+      "detections": 3
     },
     {
       "year": 2001,
       "sensor": "MODIS",
       "satellite": "Terra",
-      "before": 1600,
-      "after": 1599
+      "detections": 1599
     },
     {
       "year": 2002,
       "sensor": "MODIS",
       "satellite": "Aqua",
-      "before": 1262,
-      "after": 1262
+      "detections": 1262
     },
     {
       "year": 2002,
       "sensor": "MODIS",
       "satellite": "Terra",
-      "before": 1383,
-      "after": 1383
+      "detections": 1383
     },
     {
       "year": 2003,
       "sensor": "MODIS",
       "satellite": "Aqua",
-      "before": 3407,
-      "after": 3407
+      "detections": 3407
     },
     {
       "year": 2003,
       "sensor": "MODIS",
       "satellite": "Terra",
-      "before": 2839,
-      "after": 2839
+      "detections": 2839
     },
     {
       "year": 2004,
       "sensor": "MODIS",
       "satellite": "Aqua",
-      "before": 1717,
-      "after": 1716
+      "detections": 1716
     },
     {
       "year": 2004,
       "sensor": "MODIS",
       "satellite": "Terra",
-      "before": 1325,
-      "after": 1324
+      "detections": 1324
     },
     {
       "year": 2005,
       "sensor": "MODIS",
       "satellite": "Aqua",
-      "before": 4989,
-      "after": 4988
+      "detections": 4988
     },
     {
       "year": 2005,
       "sensor": "MODIS",
       "satellite": "Terra",
-      "before": 4275,
-      "after": 4275
+      "detections": 4275
     },
     {
       "year": 2006,
       "sensor": "MODIS",
       "satellite": "Aqua",
-      "before": 1477,
-      "after": 1477
+      "detections": 1477
     },
     {
       "year": 2006,
       "sensor": "MODIS",
       "satellite": "Terra",
-      "before": 1175,
-      "after": 1173
+      "detections": 1173
     },
     {
       "year": 2007,
       "sensor": "MODIS",
       "satellite": "Aqua",
-      "before": 912,
-      "after": 912
+      "detections": 912
     },
     {
       "year": 2007,
       "sensor": "MODIS",
       "satellite": "Terra",
-      "before": 673,
-      "after": 673
+      "detections": 673
     },
     {
       "year": 2008,
       "sensor": "MODIS",
       "satellite": "Aqua",
-      "before": 612,
-      "after": 612
+      "detections": 612
     },
     {
       "year": 2008,
       "sensor": "MODIS",
       "satellite": "Terra",
-      "before": 387,
-      "after": 387
+      "detections": 387
     },
     {
       "year": 2009,
       "sensor": "MODIS",
       "satellite": "Aqua",
-      "before": 1927,
-      "after": 1927
+      "detections": 3854
     },
     {
       "year": 2009,
       "sensor": "MODIS",
       "satellite": "Terra",
-      "before": 1539,
-      "after": 1539
+      "detections": 3078
     },
     {
       "year": 2010,
       "sensor": "MODIS",
       "satellite": "Aqua",
-      "before": 2225,
-      "after": 2221
+      "detections": 4442
     },
     {
       "year": 2010,
       "sensor": "MODIS",
       "satellite": "Terra",
-      "before": 1991,
-      "after": 1986
+      "detections": 3972
     },
     {
       "year": 2011,
       "sensor": "MODIS",
       "satellite": "Aqua",
-      "before": 1590,
-      "after": 1590
+      "detections": 3180
     },
     {
       "year": 2011,
       "sensor": "MODIS",
       "satellite": "Terra",
-      "before": 1443,
-      "after": 1442
+      "detections": 2884
     },
     {
       "year": 2012,
       "sensor": "MODIS",
       "satellite": "Aqua",
-      "before": 1940,
-      "after": 1938
+      "detections": 3876
     },
     {
       "year": 2012,
       "sensor": "MODIS",
       "satellite": "Terra",
-      "before": 1612,
-      "after": 1606
+      "detections": 3212
     },
     {
       "year": 2012,
       "sensor": "VIIRS",
       "satellite": "N",
-      "before": 9473,
-      "after": 9074
+      "detections": 9074
     },
     {
       "year": 2013,
       "sensor": "MODIS",
       "satellite": "Aqua",
-      "before": 2402,
-      "after": 2401
+      "detections": 4802
     },
     {
       "year": 2013,
       "sensor": "MODIS",
       "satellite": "Terra",
-      "before": 2036,
-      "after": 2036
+      "detections": 4072
     },
     {
       "year": 2013,
       "sensor": "VIIRS",
       "satellite": "N",
-      "before": 12102,
-      "after": 11486
+      "detections": 11486
     },
     {
       "year": 2014,
       "sensor": "MODIS",
       "satellite": "Aqua",
-      "before": 339,
-      "after": 339
+      "detections": 678
     },
     {
       "year": 2014,
       "sensor": "MODIS",
       "satellite": "Terra",
-      "before": 275,
-      "after": 274
+      "detections": 548
     },
     {
       "year": 2014,
       "sensor": "VIIRS",
       "satellite": "N",
-      "before": 2341,
-      "after": 1816
+      "detections": 1816
     },
     {
       "year": 2015,
       "sensor": "MODIS",
       "satellite": "Aqua",
-      "before": 1053,
-      "after": 1053
+      "detections": 2106
     },
     {
       "year": 2015,
       "sensor": "MODIS",
       "satellite": "Terra",
-      "before": 1005,
-      "after": 1005
+      "detections": 2010
     },
     {
       "year": 2015,
       "sensor": "VIIRS",
       "satellite": "N",
-      "before": 5875,
-      "after": 5404
+      "detections": 5404
     },
     {
       "year": 2016,
       "sensor": "MODIS",
       "satellite": "Aqua",
-      "before": 2461,
-      "after": 2461
+      "detections": 4922
     },
     {
       "year": 2016,
       "sensor": "MODIS",
       "satellite": "Terra",
-      "before": 2340,
-      "after": 2339
+      "detections": 4678
     },
     {
       "year": 2016,
       "sensor": "VIIRS",
       "satellite": "N",
-      "before": 13930,
-      "after": 13519
+      "detections": 13519
     },
     {
       "year": 2017,
       "sensor": "MODIS",
       "satellite": "Aqua",
-      "before": 3013,
-      "after": 3013
+      "detections": 6026
     },
     {
       "year": 2017,
       "sensor": "MODIS",
       "satellite": "Terra",
-      "before": 3632,
-      "after": 3625
+      "detections": 7250
     },
     {
       "year": 2017,
       "sensor": "VIIRS",
       "satellite": "N",
-      "before": 19184,
-      "after": 18779
+      "detections": 18779
     },
     {
       "year": 2018,
       "sensor": "MODIS",
       "satellite": "Aqua",
-      "before": 697,
-      "after": 688
+      "detections": 1376
     },
     {
       "year": 2018,
       "sensor": "MODIS",
       "satellite": "Terra",
-      "before": 613,
-      "after": 598
+      "detections": 1196
     },
     {
       "year": 2018,
       "sensor": "VIIRS",
       "satellite": "N",
-      "before": 3827,
-      "after": 3469
+      "detections": 3469
     },
     {
       "year": 2018,
       "sensor": "VIIRS",
       "satellite": "N20",
-      "before": 3672,
-      "after": 3361
+      "detections": 3361
     },
     {
       "year": 2019,
       "sensor": "MODIS",
       "satellite": "Aqua",
-      "before": 681,
-      "after": 661
+      "detections": 1322
     },
     {
       "year": 2019,
       "sensor": "MODIS",
       "satellite": "Terra",
-      "before": 588,
-      "after": 577
+      "detections": 1154
     },
     {
       "year": 2019,
       "sensor": "VIIRS",
       "satellite": "N",
-      "before": 3794,
-      "after": 3473
+      "detections": 3473
     },
     {
       "year": 2019,
       "sensor": "VIIRS",
       "satellite": "N20",
-      "before": 3596,
-      "after": 3254
+      "detections": 3254
     },
     {
       "year": 2020,
       "sensor": "MODIS",
       "satellite": "Aqua",
-      "before": 675,
-      "after": 662
+      "detections": 1324
     },
     {
       "year": 2020,
       "sensor": "MODIS",
       "satellite": "Terra",
-      "before": 674,
-      "after": 661
+      "detections": 1322
     },
     {
       "year": 2020,
       "sensor": "VIIRS",
       "satellite": "N",
-      "before": 3769,
-      "after": 3474
+      "detections": 3474
     },
     {
       "year": 2020,
       "sensor": "VIIRS",
       "satellite": "N20",
-      "before": 3988,
-      "after": 3677
+      "detections": 3677
     },
     {
       "year": 2021,
       "sensor": "MODIS",
       "satellite": "Aqua",
-      "before": 483,
-      "after": 482
+      "detections": 964
     },
     {
       "year": 2021,
       "sensor": "MODIS",
       "satellite": "Terra",
-      "before": 467,
-      "after": 462
+      "detections": 924
     },
     {
       "year": 2021,
       "sensor": "VIIRS",
       "satellite": "N",
-      "before": 2591,
-      "after": 2327
+      "detections": 2327
     },
     {
       "year": 2021,
       "sensor": "VIIRS",
       "satellite": "N20",
-      "before": 2501,
-      "after": 2242
+      "detections": 2242
     },
     {
       "year": 2022,
       "sensor": "MODIS",
       "satellite": "Aqua",
-      "before": 1112,
-      "after": 1104
+      "detections": 2208
     },
     {
       "year": 2022,
       "sensor": "MODIS",
       "satellite": "Terra",
-      "before": 1161,
-      "after": 1154
+      "detections": 2308
     },
     {
       "year": 2022,
       "sensor": "VIIRS",
       "satellite": "N",
-      "before": 5079,
-      "after": 4892
+      "detections": 4892
     },
     {
       "year": 2022,
       "sensor": "VIIRS",
       "satellite": "N20",
-      "before": 5860,
-      "after": 5653
+      "detections": 5653
     },
     {
       "year": 2023,
       "sensor": "MODIS",
       "satellite": "Aqua",
-      "before": 576,
-      "after": 568
+      "detections": 568
     },
     {
       "year": 2023,
       "sensor": "MODIS",
       "satellite": "Terra",
-      "before": 486,
-      "after": 481
+      "detections": 481
     },
     {
       "year": 2023,
       "sensor": "VIIRS",
       "satellite": "N",
-      "before": 2953,
-      "after": 2695
+      "detections": 2695
     },
     {
       "year": 2023,
       "sensor": "VIIRS",
       "satellite": "N20",
-      "before": 3384,
-      "after": 3105
+      "detections": 3105
     },
     {
       "year": 2024,
       "sensor": "MODIS",
       "satellite": "Aqua",
-      "before": 1504,
-      "after": 1481
+      "detections": 1481
     },
     {
       "year": 2024,
       "sensor": "MODIS",
       "satellite": "Terra",
-      "before": 1647,
-      "after": 1626
+      "detections": 1626
     },
     {
       "year": 2024,
       "sensor": "VIIRS",
       "satellite": "N",
-      "before": 12078,
-      "after": 11872
+      "detections": 11872
     },
     {
       "year": 2024,
       "sensor": "VIIRS",
       "satellite": "N20",
-      "before": 12010,
-      "after": 11767
+      "detections": 11767
     },
     {
       "year": 2025,
       "sensor": "MODIS",
       "satellite": "Aqua",
-      "before": 2408,
-      "after": 2398
+      "detections": 2398
     },
     {
       "year": 2025,
       "sensor": "MODIS",
       "satellite": "Terra",
-      "before": 2459,
-      "after": 2455
+      "detections": 2455
     },
     {
       "year": 2025,
       "sensor": "VIIRS",
       "satellite": "N",
-      "before": 13600,
-      "after": 13330
+      "detections": 13330
     },
     {
       "year": 2025,
       "sensor": "VIIRS",
       "satellite": "N20",
-      "before": 13862,
-      "after": 13521
+      "detections": 13521
+    }
+  ],
+  "input_detections": 268917,
+  "merged_detections": 159404,
+  "parameters": {
+    "radius_km": 1.0,
+    "frp_ratio": 2.0,
+    "frp_absolute_mw": 2.0
+  },
+  "counts_by_year": [
+    {
+      "year": 2000,
+      "before": 3,
+      "after": 3
+    },
+    {
+      "year": 2001,
+      "before": 1599,
+      "after": 1390
+    },
+    {
+      "year": 2002,
+      "before": 2645,
+      "after": 2277
+    },
+    {
+      "year": 2003,
+      "before": 6246,
+      "after": 5042
+    },
+    {
+      "year": 2004,
+      "before": 3040,
+      "after": 2589
+    },
+    {
+      "year": 2005,
+      "before": 9263,
+      "after": 7511
+    },
+    {
+      "year": 2006,
+      "before": 2650,
+      "after": 2137
+    },
+    {
+      "year": 2007,
+      "before": 1585,
+      "after": 1376
+    },
+    {
+      "year": 2008,
+      "before": 999,
+      "after": 899
+    },
+    {
+      "year": 2009,
+      "before": 6932,
+      "after": 2911
+    },
+    {
+      "year": 2010,
+      "before": 8414,
+      "after": 3430
+    },
+    {
+      "year": 2011,
+      "before": 6064,
+      "after": 2537
+    },
+    {
+      "year": 2012,
+      "before": 16162,
+      "after": 6616
+    },
+    {
+      "year": 2013,
+      "before": 20360,
+      "after": 7782
+    },
+    {
+      "year": 2014,
+      "before": 3042,
+      "after": 1568
+    },
+    {
+      "year": 2015,
+      "before": 9520,
+      "after": 4331
+    },
+    {
+      "year": 2016,
+      "before": 23119,
+      "after": 7742
+    },
+    {
+      "year": 2017,
+      "before": 32055,
+      "after": 11549
+    },
+    {
+      "year": 2018,
+      "before": 9402,
+      "after": 3353
+    },
+    {
+      "year": 2019,
+      "before": 9203,
+      "after": 3891
+    },
+    {
+      "year": 2020,
+      "before": 9797,
+      "after": 3542
+    },
+    {
+      "year": 2021,
+      "before": 6457,
+      "after": 2959
+    },
+    {
+      "year": 2022,
+      "before": 15061,
+      "after": 5093
+    },
+    {
+      "year": 2023,
+      "before": 6849,
+      "after": 3010
+    },
+    {
+      "year": 2024,
+      "before": 26746,
+      "after": 6889
+    },
+    {
+      "year": 2025,
+      "before": 31704,
+      "after": 9086
     }
   ]
 }
