@@ -1,5 +1,6 @@
 """Convert FIRMS archive CSV files to the globe's six-field format."""
 import argparse
+import hashlib
 import csv
 import json
 import math
@@ -18,6 +19,21 @@ SATELLITES = {"TERRA": ("Terra", "MODIS"), "AQUA": ("Aqua", "MODIS"),
               "JPSS-2": ("N21", "VIIRS")}
 BACKEND = Path(__file__).resolve().parent
 
+# "" = rows without a type (near-real-time data). Add "2" to keep static land sources.
+KEEP_TYPES = {"", "0"}
+
+
+def unique_files(paths):
+    """Skip files whose content is identical to one already seen (duplicate copies)."""
+    seen, unique = set(), []
+    for path in paths:
+        digest = hashlib.sha256(path.read_bytes()).hexdigest()
+        if digest in seen:
+            print(f"Skipping duplicate file: {path}")
+            continue
+        seen.add(digest)
+        unique.append(path)
+    return unique
 
 def normalize(row):
     """Map one CSV record to one hotspot; fail on invalid required values."""
@@ -40,12 +56,12 @@ def normalize(row):
 
 
 def read_files(paths):
-    """Read all files and years; retain every valid detection, including repeats."""
+    """Read all files; keep only detections whose type is in KEEP_TYPES."""
     hotspots, files = [], []
-    counts = Counter()
+    before, after = Counter(), Counter()
     for path in sorted(paths):
         types = Counter()
-        count = 0
+        count = kept = 0
         with path.open(encoding="utf-8-sig", newline="") as stream:
             reader = csv.DictReader(stream)
             headers = reader.fieldnames or []
@@ -60,17 +76,27 @@ def read_files(paths):
                     hotspot = normalize(row)
                 except (ValueError, TypeError, KeyError) as error:
                     raise ValueError(f"{path}, CSV line {reader.line_num}: {error}") from error
-                hotspots.append(hotspot)
-                counts[(hotspot["date"][:4], hotspot["sensor"], hotspot["satellite"])] += 1
-                types[row.get("type", "").strip() or "missing"] += 1
+                key = (hotspot["date"][:4], hotspot["sensor"], hotspot["satellite"])
+                kind = row.get("type", "").strip()
+                types[kind or "missing"] += 1
                 count += 1
-        files.append(dict(file=path.name, rows=count, type_counts=dict(sorted(types.items()))))
+                before[key] += 1
+                if kind not in KEEP_TYPES:
+                    continue
+                hotspots.append(hotspot)
+                after[key] += 1
+                kept += 1
+        files.append(dict(file=path.name, rows=count, kept=kept,
+                          type_counts=dict(sorted(types.items()))))
     hotspots.sort(key=lambda r: (r["date"], r["sensor"], r["satellite"], r["lat"], r["lon"]))
-    report = dict(mode="schema normalization only; no filtering or deduplication",
-                  total=len(hotspots), files=files,
-                  counts=[dict(year=int(year), sensor=sensor, satellite=satellite,
-                               before=n, after=n)
-                          for (year, sensor, satellite), n in sorted(counts.items())])
+    report = dict(
+        mode=f"schema normalization + type filter (kept types: {sorted(KEEP_TYPES)}); "
+             "no deduplication of detections",
+        total=len(hotspots), files=files,
+        counts=[dict(year=int(year), sensor=sensor, satellite=satellite,
+                     before=before[(year, sensor, satellite)],
+                     after=after[(year, sensor, satellite)])
+                for (year, sensor, satellite) in sorted(before)])
     return hotspots, report
 
 
@@ -80,6 +106,8 @@ def build_hotspots(input_dir=BACKEND / "data"):
     paths = sorted(p for p in input_dir.rglob("*") if p.is_file() and p.suffix.lower() == ".csv")
     if not paths:
         raise ValueError(f"No CSV files found in {input_dir}")
+
+    paths = unique_files(paths)
     # Finish validating all input before replacing any existing output.
     hotspots, report = read_files(paths)
     csv_path = BACKEND.parents[2] / "public" / "viirsmode" / "hotspots.csv"
