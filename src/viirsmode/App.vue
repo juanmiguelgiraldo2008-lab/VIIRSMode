@@ -51,7 +51,7 @@ function download() {
     <p class="vm-sub">Burning activity calendar: harmonized MODIS + VIIRS hotspots</p>
     <p v-if="usingFake" class="vm-warn">Showing fake demo data</p>
 
-    <GlobeView ref="globe" :area="area" @select="onSelect" />
+    <GlobeView ref="globe" :area="area" :hotspots="filtered" @select="onSelect" />
     <AreaControls
       :area="area"
       :range="range"
