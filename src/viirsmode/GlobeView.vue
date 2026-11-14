@@ -52,8 +52,9 @@ function drawHotspots() {
     const h = list[i];
     if (!Number.isFinite(h.lat) || !Number.isFinite(h.lon)) continue;
     points.add({
+      id: h,
       position: Cesium.Cartesian3.fromDegrees(h.lon, h.lat, 100),
-      pixelSize: 5,
+      pixelSize: 6,
       color: h.sensor === 'MODIS' ? Cesium.Color.YELLOW : Cesium.Color.RED,
       outlineColor: Cesium.Color.BLACK.withAlpha(0.6),
       outlineWidth: 1,
@@ -98,6 +99,9 @@ onMounted(() => {
     infoBox: false,
     selectionIndicator: false,
   });
+  viewer.cesiumWidget.screenSpaceEventHandler.removeInputAction(
+    Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK,
+  );
 
   points = viewer.scene.primitives.add(new Cesium.PointPrimitiveCollection());
 
@@ -109,12 +113,19 @@ onMounted(() => {
 
   handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
   handler.setInputAction((click) => {
+    const picked = viewer.scene.pick(click.position);
+    const hotspot = picked?.id?.date ? picked.id : null;
+    if (hotspot) {
+      emit('select', { lat: hotspot.lat, lon: hotspot.lon, hotspot });
+      return;
+    }
     const cartesian = viewer.camera.pickEllipsoid(click.position, viewer.scene.globe.ellipsoid);
     if (!cartesian) return;
     const c = Cesium.Cartographic.fromCartesian(cartesian);
     emit('select', {
       lat: Cesium.Math.toDegrees(c.latitude),
       lon: Cesium.Math.toDegrees(c.longitude),
+      hotspot: null,
     });
   }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
 });
@@ -134,25 +145,18 @@ onBeforeUnmount(() => {
     <div class="globe-legend">
       <span><i class="dot modis"></i> MODIS</span>
       <span><i class="dot viirs"></i> VIIRS</span>
-      <span class="globe-count">
-        Showing {{ shown }} of {{ hotspots.length }} hotspots
-      </span>
+      <span class="globe-count">{{ shown }} of {{ hotspots.length }} shown</span>
     </div>
   </div>
 </template>
 
 <style scoped>
-.globe-wrap { position: relative; }
-.globe {
-  width: 100%;
-  height: 420px;
-  border-radius: 8px;
-  overflow: hidden;
-}
+.globe-wrap { position: absolute; inset: 0; }
+.globe { position: absolute; inset: 0; }
 .globe-legend {
   position: absolute;
-  top: 8px;
-  left: 8px;
+  top: 96px;
+  left: 20px;
   display: flex;
   gap: 12px;
   align-items: center;
@@ -161,6 +165,7 @@ onBeforeUnmount(() => {
   border-radius: 6px;
   font-size: 12px;
   color: #eee;
+  pointer-events: none;
 }
 .dot {
   display: inline-block;
