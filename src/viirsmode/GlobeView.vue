@@ -75,6 +75,23 @@ onMounted(() => {
 
 watch(() => [props.area.lat, props.area.lon, props.area.radiusKm], drawArea);
 
+function flyToArea() {
+  if (!viewer) return;
+  const { lat, lon, radiusKm } = props.area;
+  if (![lat, lon, radiusKm].every(Number.isFinite)) return;
+  viewer.camera.flyTo({
+    destination: Cesium.Cartesian3.fromDegrees(
+      lon,
+      lat,
+      Math.max(radiusKm * 6000, 200000),
+    ),
+  });
+}
+
+defineExpose({ flyToArea });
+
+
+
 onBeforeUnmount(() => {
   handler?.destroy();
   viewer?.destroy();

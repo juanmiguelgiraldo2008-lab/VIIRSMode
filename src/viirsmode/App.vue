@@ -12,7 +12,8 @@ import {
 const hotspots = shallowRef(makeFakeHotspots());
 const usingFake = ref(true);
 const area = reactive({ lat: 39.5, lon: -8, radiusKm: 150 });
-const range = reactive({ from: 2000, to: 2025 });
+const range = reactive({ from: 2000, to: 2025 })
+const globe = ref(null);
 
 // Real file goes in public/viirsmode/hotspots.csv
 onMounted(async () => {
@@ -50,9 +51,14 @@ function download() {
     <p class="vm-sub">Burning activity calendar: harmonized MODIS + VIIRS hotspots</p>
     <p v-if="usingFake" class="vm-warn">Showing fake demo data</p>
 
-    <GlobeView :area="area" @select="onSelect" />
-    <AreaControls :area="area" :range="range" :count="filtered.length" @download="download" />
-
+    <GlobeView ref="globe" :area="area" @select="onSelect" />
+    <AreaControls
+      :area="area"
+      :range="range"
+      :count="filtered.length"
+      @download="download"
+      @goto="globe?.flyToArea()"
+    />
     <ComparisonCard :months="months" />
     <CalendarHeatmap :months="months" />
   </main>

@@ -1,7 +1,7 @@
 <script setup>
 // area and range are reactive objects owned by App.vue
 defineProps({ area: Object, range: Object, count: Number });
-defineEmits(['download']);
+defineEmits(['download', 'goto']);
 </script>
 
 <template>
@@ -13,6 +13,9 @@ defineEmits(['download']);
     <label>To year <input type="number" min="2000" max="2026" v-model.number="range.to" /></label>
     <button type="button" @click="$emit('download')">
       Download CSV ({{ count }} hotspots)
+    </button>
+    <button type="button" @click="$emit('goto')">
+      Go to Location
     </button>
   </div>
 </template>
