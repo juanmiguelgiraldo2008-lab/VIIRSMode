@@ -8,7 +8,6 @@ defineProps({
   months: { type: Array, required: true },
   count: Number,
   range: Object,
-  usingFake: Boolean,
 });
 defineEmits(['close', 'download']);
 
@@ -44,7 +43,6 @@ const TABS = [
         <p v-if="selection?.name">{{ selection.name }}</p>
         <p>{{ selection?.lat.toFixed(3) }}, {{ selection?.lon.toFixed(3) }}</p>
         <p>{{ count }} hotspots in this area, {{ range.from }}–{{ range.to }}</p>
-        <p v-if="usingFake" class="vm-warn">Demo data, not real detections</p>
       </div>
 
       <div v-if="selection?.hotspot" class="info-block">

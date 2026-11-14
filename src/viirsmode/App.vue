@@ -3,30 +3,27 @@ import { computed, onMounted, reactive, shallowRef, ref } from 'vue';
 import GlobeView from './GlobeView.vue';
 import SearchBar from './SearchBar.vue';
 import InfoPanel from './InfoPanel.vue';
-import { makeFakeHotspots } from './fakeData.js';
 import {
   parseHotspotsCsv, filterHotspots, monthlyCounts, hotspotsToCsv, downloadText,
 } from './hotspots.js';
 
-const hotspots = shallowRef(makeFakeHotspots());
-const usingFake = ref(true);
+const hotspots = shallowRef([]);
+const hotspotError = ref('');
 const area = reactive({ lat: 39.5, lon: -8, radiusKm: 150 });
 const range = reactive({ from: 2000, to: 2025 });
 const globe = ref(null);
 const panelOpen = ref(false);
 const selection = ref(null);
 
-// Real file goes in public/viirsmode/hotspots.csv
 onMounted(async () => {
   try {
     const res = await fetch('/viirsmode/hotspots.csv');
+    if (!res.ok) throw new Error(`Hotspot CSV request failed (${res.status})`);
     const parsed = parseHotspotsCsv(await res.text());
-    if (parsed.length) {
-      hotspots.value = parsed;
-      usingFake.value = false;
-    }
-  } catch {
-    // no real file yet: keep the fake data
+    if (!parsed.length) throw new Error('Hotspot CSV contains no valid detections');
+    hotspots.value = parsed;
+  } catch (error) {
+    hotspotError.value = error instanceof Error ? error.message : String(error);
   }
 });
 
@@ -66,7 +63,7 @@ function download() {
     <header class="vm-brand">
       <h1>ViirsMode</h1>
       <p>Burning activity calendar · harmonized MODIS + VIIRS</p>
-      <p v-if="usingFake" class="vm-warn">Showing fake demo data</p>
+      <p v-if="hotspotError" class="vm-warn">Hotspot data unavailable: {{ hotspotError }}</p>
     </header>
 
     <SearchBar :area="area" :range="range" @found="onFound" />
@@ -77,7 +74,6 @@ function download() {
       :months="months"
       :count="filtered.length"
       :range="range"
-      :using-fake="usingFake"
       @close="panelOpen = false"
       @download="download"
     />

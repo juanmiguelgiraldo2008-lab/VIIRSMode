@@ -1,21 +1,38 @@
 // Parse hotspots.csv (columns: lat, lon, date, sensor, satellite, frp, ...)
 export function parseHotspotsCsv(text) {
   const lines = text.trim().split(/\r?\n/);
-  const header = lines[0].split(',').map((h) => h.trim());
+  if (!lines[0]) return [];
+  const header = lines[0].replace(/^\uFEFF/, '').split(',').map((h) => h.trim());
   const idx = Object.fromEntries(header.map((h, i) => [h, i]));
   if (idx.lat === undefined || idx.lon === undefined || idx.date === undefined) {
     return [];
   }
   const out = [];
   for (let i = 1; i < lines.length; i++) {
-    const p = lines[i].split(',');
+    const p = lines[i].split(',').map((value) => value.trim());
+    if (p.length !== header.length || !/^\d{4}-\d{2}-\d{2}$/.test(p[idx.date] ?? '')) {
+      continue;
+    }
+    if (p[idx.lat] === '' || p[idx.lon] === '' || (idx.frp !== undefined && p[idx.frp] === '')) {
+      continue;
+    }
+    const lat = Number(p[idx.lat]);
+    const lon = Number(p[idx.lon]);
+    const frp = idx.frp === undefined ? undefined : Number(p[idx.frp]);
+    if (
+      !Number.isFinite(lat) || lat < -90 || lat > 90 ||
+      !Number.isFinite(lon) || lon < -180 || lon > 180 ||
+      (frp !== undefined && (!Number.isFinite(frp) || frp < 0))
+    ) {
+      continue;
+    }
     out.push({
-      lat: parseFloat(p[idx.lat]),
-      lon: parseFloat(p[idx.lon]),
+      lat,
+      lon,
       date: p[idx.date],
-      sensor: p[idx.sensor],
-      satellite: p[idx.satellite],
-      frp: parseFloat(p[idx.frp]),
+      sensor: idx.sensor === undefined ? undefined : p[idx.sensor],
+      satellite: idx.satellite === undefined ? undefined : p[idx.satellite],
+      frp,
     });
   }
   return out;
