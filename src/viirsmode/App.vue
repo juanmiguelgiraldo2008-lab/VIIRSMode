@@ -1,41 +1,59 @@
 <script setup>
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, reactive, shallowRef, ref } from 'vue';
 import CalendarHeatmap from './CalendarHeatmap.vue';
 import GlobeView from './GlobeView.vue';
-import { makeFakeCalendar } from './fakeData.js';
+import AreaControls from './AreaControls.vue';
+import ComparisonCard from './ComparisonCard.vue';
+import { makeFakeHotspots } from './fakeData.js';
+import {
+  parseHotspotsCsv, filterHotspots, monthlyCounts, hotspotsToCsv, downloadText,
+} from './hotspots.js';
 
-const data = ref(makeFakeCalendar());
+const hotspots = shallowRef(makeFakeHotspots());
 const usingFake = ref(true);
-const selected = ref(null);
+const area = reactive({ lat: 39.5, lon: -8, radiusKm: 150 });
+const range = reactive({ from: 2000, to: 2025 });
 
-// Later, the real file goes in public/viirsmode/calendar.json
+// Real file goes in public/viirsmode/hotspots.csv
 onMounted(async () => {
   try {
-    const res = await fetch('/viirsmode/calendar.json');
-    const json = await res.json();
-    if (Array.isArray(json.months) && json.months.length) {
-      data.value = json;
+    const res = await fetch('/viirsmode/hotspots.csv');
+    const parsed = parseHotspotsCsv(await res.text());
+    if (parsed.length) {
+      hotspots.value = parsed;
       usingFake.value = false;
     }
   } catch {
     // no real file yet: keep the fake data
   }
 });
+
+const filtered = computed(() => filterHotspots(hotspots.value, area, range.from, range.to));
+const months = computed(() => monthlyCounts(filtered.value, range.from, range.to));
+
+function onSelect({ lat, lon }) {
+  area.lat = Number(lat.toFixed(3));
+  area.lon = Number(lon.toFixed(3));
+}
+
+function download() {
+  downloadText(
+    `viirsmode_hotspots_${range.from}-${range.to}.csv`,
+    hotspotsToCsv(filtered.value),
+  );
+}
 </script>
 
 <template>
   <main class="vm">
     <h1>ViirsMode</h1>
-    <p class="vm-sub">
-      Burning activity calendar: harmonized MODIS + VIIRS hotspots
-    </p>
-    <GlobeView @select="selected = $event" />
-    <p v-if="selected" class="vm-sub">
-      Selected point: {{ selected.lat.toFixed(3) }}, {{ selected.lon.toFixed(3) }}
-    </p>
-    <p v-else class="vm-sub">Click the globe to select a location</p>
-    <h2>{{ data.area?.name }}</h2>
+    <p class="vm-sub">Burning activity calendar: harmonized MODIS + VIIRS hotspots</p>
     <p v-if="usingFake" class="vm-warn">Showing fake demo data</p>
-    <CalendarHeatmap :months="data.months" />
+
+    <GlobeView :area="area" @select="onSelect" />
+    <AreaControls :area="area" :range="range" :count="filtered.length" @download="download" />
+
+    <ComparisonCard :months="months" />
+    <CalendarHeatmap :months="months" />
   </main>
 </template>
