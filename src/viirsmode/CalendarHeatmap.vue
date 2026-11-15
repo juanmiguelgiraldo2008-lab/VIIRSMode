@@ -3,6 +3,7 @@ import { computed } from 'vue';
 
 const props = defineProps({
   months: { type: Array, required: true },
+  currentMonth: { type: String, default: '' },
 });
 
 const MONTH_NAMES = [
@@ -52,6 +53,15 @@ function colorFor(count) {
 function countFor(year, month) {
   return byKey.value.get(`${year}-${month}`);
 }
+
+function monthState(year, month) {
+  if (!props.currentMonth) return {};
+  const key = `${year}-${String(month).padStart(2, '0')}`;
+  return {
+    'cal-cell--current': key === props.currentMonth,
+    'cal-cell--future': key > props.currentMonth,
+  };
+}
 </script>
 
 <template>
@@ -68,6 +78,7 @@ function countFor(year, month) {
         v-for="month in 12"
         :key="month"
         class="cal-cell"
+        :class="monthState(year, month)"
         :style="{ background: colorFor(countFor(year, month)) }"
         :title="`${MONTH_NAMES[month - 1]} ${year}: ${countFor(year, month) ?? 'no data'} MODIS-equivalent groups`"
       ></span>

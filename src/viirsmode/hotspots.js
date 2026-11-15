@@ -79,6 +79,34 @@ export function filterByYears(hotspots, fromYear, toYear) {
   });
 }
 
+export function buildMonthlyIndex(hotspots) {
+  const grouped = new Map();
+  for (const hotspot of hotspots) {
+    const match = /^(\d{4})-(0[1-9]|1[0-2])-\d{2}$/.exec(hotspot.date);
+    if (!match) continue;
+    const key = `${match[1]}-${match[2]}`;
+    if (!grouped.has(key)) grouped.set(key, []);
+    grouped.get(key).push(hotspot);
+  }
+
+  const keys = [...grouped.keys()].sort();
+  if (!keys.length) return new Map();
+
+  const firstMonth =
+    Number(keys[0].slice(0, 4)) * 12 + Number(keys[0].slice(5)) - 1;
+  const lastKey = keys[keys.length - 1];
+  const lastMonth =
+    Number(lastKey.slice(0, 4)) * 12 + Number(lastKey.slice(5)) - 1;
+  const index = new Map();
+  for (let monthIndex = firstMonth; monthIndex <= lastMonth; monthIndex++) {
+    const year = Math.floor(monthIndex / 12);
+    const month = String((monthIndex % 12) + 1).padStart(2, '0');
+    const key = `${year}-${month}`;
+    index.set(key, grouped.get(key) ?? []);
+  }
+  return index;
+}
+
 export function hotspotsInView(hotspots, bounds, maxPoints) {
   const { west, east, south, north } = bounds;
   const inView = hotspots.filter((hotspot) => {
@@ -137,6 +165,70 @@ export function median(values) {
   const s = [...values].sort((a, b) => a - b);
   const mid = Math.floor(s.length / 2);
   return s.length % 2 ? s[mid] : (s[mid - 1] + s[mid]) / 2;
+}
+
+export function yearTotals(months, upToMonth) {
+  const endMonth = Math.min(12, Math.max(0, Number(upToMonth) || 0));
+  const totals = new Map();
+  for (const entry of months) {
+    const year = Number(entry.year);
+    const month = Number(entry.month);
+    const count = Number(entry.count);
+    if (!Number.isFinite(year)) continue;
+    if (!totals.has(year)) totals.set(year, 0);
+    if (month >= 1 && month <= endMonth) {
+      totals.set(year, totals.get(year) + (Number.isFinite(count) ? count : 0));
+    }
+  }
+  return [...totals]
+    .map(([year, total]) => ({ year, total }))
+    .sort((a, b) => a.year - b.year);
+}
+
+export function referenceMonth(months, year) {
+  return (
+    Math.max(
+      0,
+      ...months
+        .filter(
+          (entry) =>
+            Number(entry.year) === Number(year) &&
+            Number(entry.month) >= 1 &&
+            Number(entry.month) <= 12 &&
+            Number(entry.count) > 0,
+        )
+        .map((entry) => Number(entry.month)),
+    ) || 12
+  );
+}
+
+export function activityVsMedian(months, year) {
+  const targetYear = Number(year);
+  const upToMonth = referenceMonth(months, targetYear);
+  const totals = yearTotals(months, upToMonth);
+  if (!totals.some((entry) => entry.year === targetYear)) {
+    totals.push({ year: targetYear, total: 0 });
+    totals.sort((a, b) => a.year - b.year);
+  }
+
+  const current = totals.find((entry) => entry.year === targetYear);
+  const otherTotals = totals
+    .filter((entry) => entry.year !== targetYear)
+    .map((entry) => entry.total);
+  const baselineMedian = median(otherTotals);
+  const ranked = [...totals].sort(
+    (a, b) => b.total - a.total || a.year - b.year,
+  );
+  return {
+    year: targetYear,
+    upToMonth,
+    total: current.total,
+    median: baselineMedian,
+    ratio: baselineMedian > 0 ? current.total / baselineMedian : null,
+    position: ranked.findIndex((entry) => entry.year === targetYear) + 1,
+    yearsCompared: otherTotals.length,
+    totals,
+  };
 }
 
 // Reference month vs median of the same calendar month in the other years

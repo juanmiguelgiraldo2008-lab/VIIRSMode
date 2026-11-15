@@ -10,7 +10,9 @@ import {
 import GlobeView from './GlobeView.vue';
 import SearchBar from './SearchBar.vue';
 import InfoPanel from './InfoPanel.vue';
+import TimelineBar from './TimelineBar.vue';
 import {
+  buildMonthlyIndex,
   parseHotspotsCsv,
   filterHotspots,
   filterByYears,
@@ -21,6 +23,8 @@ import {
 import { fetchLiveFires } from './liveFirms.js';
 
 const hotspots = shallowRef([]);
+const monthlyIndex = shallowRef(new Map());
+const monthKeys = ref([]);
 const hotspotError = ref('');
 const area = reactive({ lat: 39.5, lon: -8, radiusKm: 150 });
 const range = reactive({ from: 2025, to: 2025 });
@@ -32,6 +36,8 @@ const liveHotspots = shallowRef([]);
 const liveLoading = ref(false);
 const liveError = ref('');
 const liveStatus = ref('');
+const currentMonth = ref('');
+const timeLapseActive = ref(false);
 const keyDialogOpen = ref(false);
 const mapKey = ref('');
 const savingKey = ref(false);
@@ -59,6 +65,14 @@ const yearBounds = computed(() => {
   }
   return Number.isFinite(min) ? { min, max } : { min: 2000, max: 2025 };
 });
+const monthHotspots = computed(
+  () => monthlyIndex.value.get(currentMonth.value) ?? [],
+);
+const displayedHotspots = computed(() => {
+  if (!started.value) return [];
+  if (liveMode.value) return liveHotspots.value;
+  return timeLapseActive.value ? monthHotspots.value : visible.value;
+});
 
 onMounted(async () => {
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
@@ -81,6 +95,9 @@ onMounted(async () => {
     if (!parsed.length)
       throw new Error('Hotspot CSV contains no valid detections');
     hotspots.value = parsed;
+    monthlyIndex.value = buildMonthlyIndex(parsed);
+    monthKeys.value = [...monthlyIndex.value.keys()];
+    currentMonth.value = monthKeys.value[0] ?? '';
     range.from = yearBounds.value.max;
     range.to = yearBounds.value.max;
   } catch (error) {
@@ -168,6 +185,16 @@ function download() {
   );
 }
 
+function selectTimelineMonth(month) {
+  currentMonth.value = month;
+  timeLapseActive.value = true;
+}
+
+function selectReferenceYear(year) {
+  range.from = year;
+  range.to = year;
+}
+
 async function startExperience() {
   if (starting.value || started.value) return;
   starting.value = true;
@@ -212,6 +239,7 @@ async function activateLive() {
   try {
     const activated = await fetchLiveHotspots();
     if (activated) {
+      timeLapseActive.value = false;
       liveRefreshTimer = setInterval(() => {
         fetchLiveHotspots().catch((error) => {
           liveError.value =
@@ -265,7 +293,7 @@ async function saveMapKey() {
     <GlobeView
       ref="globe"
       :area="area"
-      :hotspots="started ? (liveMode ? liveHotspots : visible) : []"
+      :hotspots="displayedHotspots"
       :live="liveMode"
       :intro="!started"
       @select="onGlobeSelect"
@@ -301,6 +329,15 @@ async function saveMapKey() {
         <SearchBar :range="range" @found="onFound" />
       </div>
     </Transition>
+
+    <TimelineBar
+      v-if="started && !liveMode && monthKeys.length"
+      :month-keys="monthKeys"
+      :current-month="currentMonth"
+      @select="selectTimelineMonth"
+      @start="timeLapseActive = true"
+      @stop="timeLapseActive = false"
+    />
 
     <Transition name="intro">
       <main v-if="!started" class="intro-screen" :class="{ ready: introReady }">
@@ -492,8 +529,11 @@ async function saveMapKey() {
       :count="exportRows.length"
       :harmonized-count="harmonizedCount"
       :range="range"
+      :current-month="currentMonth"
+      :area="area"
       @close="panelOpen = false"
       @download="download"
+      @select-year="selectReferenceYear"
     />
   </div>
 </template>

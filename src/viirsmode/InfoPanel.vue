@@ -2,6 +2,7 @@
 import { ref } from 'vue';
 import CalendarHeatmap from './CalendarHeatmap.vue';
 import ComparisonCard from './ComparisonCard.vue';
+import FireActivityCard from './FireActivityCard.vue';
 
 defineProps({
   selection: Object,
@@ -9,8 +10,10 @@ defineProps({
   count: Number,
   harmonizedCount: Number,
   range: Object,
+  currentMonth: { type: String, default: '' },
+  area: { type: Object, required: true },
 });
-defineEmits(['close', 'download']);
+defineEmits(['close', 'download', 'select-year']);
 
 const tab = ref('overview');
 const TABS = [
@@ -63,6 +66,14 @@ const TABS = [
         <p>Fire radiative power: {{ selection.hotspot.frp }} MW</p>
       </div>
 
+      <FireActivityCard
+        :months="months"
+        :reference-year="range.to"
+        :area="area"
+        :range="range"
+        @select-year="$emit('select-year', $event)"
+      />
+
       <ComparisonCard :months="months" />
 
       <div class="info-block">
@@ -79,7 +90,7 @@ const TABS = [
       <div class="info-block">
         <h3>Burning activity calendar</h3>
         <p>MODIS-equivalent groups per month in the selected area.</p>
-        <CalendarHeatmap :months="months" />
+        <CalendarHeatmap :months="months" :current-month="currentMonth" />
       </div>
     </template>
 
@@ -102,18 +113,19 @@ const TABS = [
           activity look higher only because better sensors arrived.
         </p>
         <p>
-          ViirsMode first groups detections from the same UTC day that fall within
-          1 km and have similar fire power, so one fire seen by several satellites
-          counts once. Then, for each period with the same set of VIIRS satellites,
-          it applies one constant weight so the period's total matches what MODIS
-          alone recorded. The result is one continuous series in MODIS-equivalent
-          units from 2000 onward. In our Portugal data, the harmonized yearly
-          counts differ from MODIS by about 12% on average.
+          ViirsMode first groups detections from the same UTC day that fall
+          within 1 km and have similar fire power, so one fire seen by several
+          satellites counts once. Then, for each period with the same set of
+          VIIRS satellites, it applies one constant weight so the period's total
+          matches what MODIS alone recorded. The result is one continuous series
+          in MODIS-equivalent units from 2000 onward. In our Portugal data, the
+          harmonized yearly counts differ from MODIS by about 12% on average.
         </p>
         <p>
-          This is an approximation, not a sensor calibration: it assumes a stable
-          ratio within each period, uses only the S-NPP and NOAA-20 satellites,
-          and the weights are validated on the same years used to compute them.
+          This is an approximation, not a sensor calibration: it assumes a
+          stable ratio within each period, uses only the S-NPP and NOAA-20
+          satellites, and the weights are validated on the same years used to
+          compute them.
         </p>
       </div>
     </template>

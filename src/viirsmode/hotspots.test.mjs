@@ -1,6 +1,14 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { hotspotsInView, monthlyCounts, parseHotspotsCsv } from './hotspots.js';
+import {
+  buildMonthlyIndex,
+  activityVsMedian,
+  hotspotsInView,
+  monthlyCounts,
+  parseHotspotsCsv,
+  referenceMonth,
+  yearTotals,
+} from './hotspots.js';
 
 test('parseHotspotsCsv maps normalized FIRMS values to numeric coordinates and FRP', () => {
   const [hotspot] = parseHotspotsCsv(
@@ -76,4 +84,70 @@ test('monthlyCounts aggregates the per-record harmonization weights', () => {
   );
   assert.equal(months[0].count, 1);
   assert.equal(months[1].count, 1);
+});
+
+test('buildMonthlyIndex spans months in order and groups each month once', () => {
+  const january = { date: '2024-01-20', lat: 1 };
+  const march = { date: '2024-03-02', lat: 3 };
+  const index = buildMonthlyIndex([march, january]);
+
+  assert.deepEqual([...index.keys()], ['2024-01', '2024-02', '2024-03']);
+  assert.deepEqual(index.get('2024-01'), [january]);
+  assert.deepEqual(index.get('2024-02'), []);
+  assert.deepEqual(index.get('2024-03'), [march]);
+  assert.deepEqual([...buildMonthlyIndex([])], []);
+});
+
+test('yearTotals sums harmonized monthly counts through the requested month', () => {
+  const months = [
+    { year: 2020, month: 1, count: 10 },
+    { year: 2020, month: 2, count: 20 },
+    { year: 2020, month: 3, count: 30 },
+    { year: 2021, month: 1, count: 5 },
+    { year: 2021, month: 2, count: 5 },
+  ];
+  assert.deepEqual(yearTotals(months, 2), [
+    { year: 2020, total: 30 },
+    { year: 2021, total: 10 },
+  ]);
+});
+
+test('referenceMonth returns the last positive month or December without activity', () => {
+  const months = [
+    { year: 2020, month: 1, count: 0 },
+    { year: 2020, month: 4, count: 12 },
+    { year: 2020, month: 7, count: 0 },
+  ];
+  assert.equal(referenceMonth(months, 2020), 4);
+  assert.equal(referenceMonth(months, 2021), 12);
+});
+
+test('activityVsMedian ranks the year against other years through its reference month', () => {
+  const months = [
+    { year: 2019, month: 1, count: 5 },
+    { year: 2019, month: 2, count: 5 },
+    { year: 2020, month: 1, count: 10 },
+    { year: 2020, month: 2, count: 20 },
+    { year: 2020, month: 3, count: 0 },
+    { year: 2021, month: 1, count: 15 },
+    { year: 2021, month: 2, count: 0 },
+  ];
+  assert.deepEqual(activityVsMedian(months, 2020), {
+    year: 2020,
+    upToMonth: 2,
+    total: 30,
+    median: 12.5,
+    ratio: 2.4,
+    position: 1,
+    yearsCompared: 2,
+    totals: [
+      { year: 2019, total: 10 },
+      { year: 2020, total: 30 },
+      { year: 2021, total: 15 },
+    ],
+  });
+  assert.equal(
+    activityVsMedian([{ year: 2020, month: 1, count: 0 }], 2020).ratio,
+    null,
+  );
 });

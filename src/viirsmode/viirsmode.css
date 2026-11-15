@@ -585,13 +585,103 @@ body {
 .vm-controls {
   position: absolute;
   left: 24px;
-  bottom: 72px;
+  bottom: 132px;
   z-index: 6;
   display: flex;
   flex-direction: column;
   gap: 8px;
   width: 380px;
   max-width: calc(100vw - 48px);
+}
+.timeline-bar {
+  position: absolute;
+  right: 20px;
+  bottom: 14px;
+  left: 420px;
+  z-index: 6;
+  padding: 10px 14px 8px;
+  border: 1px solid rgba(206, 229, 240, 0.18);
+  border-radius: 12px;
+  background: rgba(7, 13, 23, 0.88);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.32);
+  backdrop-filter: blur(12px);
+}
+.timeline-controls {
+  display: grid;
+  grid-template-columns: 34px minmax(70px, 1fr) auto auto;
+  align-items: center;
+  gap: 12px;
+}
+.timeline-play {
+  display: grid;
+  width: 32px;
+  height: 32px;
+  place-items: center;
+  border: 1px solid rgba(204, 229, 240, 0.28);
+  border-radius: 7px;
+  background: rgba(193, 222, 235, 0.12);
+  color: #e9f4f8;
+  font-size: 13px;
+  cursor: pointer;
+}
+.timeline-play:hover:not(:disabled) {
+  background: rgba(193, 222, 235, 0.23);
+}
+.timeline-play:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.timeline-slider {
+  width: 100%;
+  height: 4px;
+  accent-color: #67c8c0;
+  cursor: pointer;
+}
+.timeline-slider:disabled {
+  cursor: not-allowed;
+}
+.timeline-month {
+  min-width: 66px;
+  color: #edf4f7;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+.timeline-speeds {
+  display: flex;
+  gap: 3px;
+  padding: 3px;
+  border: 1px solid rgba(204, 229, 240, 0.14);
+  border-radius: 7px;
+  background: rgba(2, 8, 17, 0.42);
+}
+.timeline-speeds button {
+  min-width: 34px;
+  padding: 5px 6px;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: #aebcc4;
+  font-size: 10px;
+  cursor: pointer;
+}
+.timeline-speeds button.selected {
+  background: #204a52;
+  color: #e5f7f8;
+}
+.timeline-note {
+  margin: 7px 0 0;
+  color: rgba(208, 222, 230, 0.66);
+  font-size: 9px;
+  line-height: 1.35;
+  text-align: center;
+  transition:
+    color 180ms ease,
+    text-shadow 180ms ease;
+}
+.timeline-note.highlighted {
+  color: #d7eff2;
+  text-shadow: 0 0 10px rgba(93, 200, 195, 0.3);
 }
 .live-control {
   display: flex;
@@ -882,6 +972,18 @@ body {
 .cal-cell {
   height: 14px;
   border-radius: 2px;
+  transition:
+    opacity 180ms ease,
+    box-shadow 180ms ease;
+}
+.cal-cell--future {
+  opacity: 0.2;
+}
+.cal-cell--current {
+  position: relative;
+  z-index: 1;
+  outline: 1px solid #d5f4f1;
+  box-shadow: 0 0 8px rgba(103, 200, 192, 0.72);
 }
 .cal-legend {
   display: flex;
@@ -896,8 +998,200 @@ body {
   height: 8px;
   border-radius: 3px;
 }
+@media (max-width: 900px) {
+  .vm-controls {
+    bottom: 142px;
+  }
+  .timeline-bar {
+    right: 14px;
+    left: 14px;
+    padding: 9px 10px 7px;
+  }
+}
+@media (max-width: 520px) {
+  .vm-controls {
+    right: 14px;
+    bottom: 150px;
+    left: 14px;
+    width: auto;
+    max-width: none;
+  }
+  .timeline-controls {
+    grid-template-columns: 32px minmax(45px, 1fr) auto;
+    gap: 8px;
+  }
+  .timeline-speeds {
+    grid-column: 2 / -1;
+    justify-self: end;
+  }
+  .timeline-month {
+    min-width: 60px;
+  }
+  .timeline-note {
+    font-size: 8px;
+  }
+}
 
 /* Comparison */
+.fire-activity-card {
+  margin: 0 0 12px;
+  padding: 12px;
+  border: 1px solid rgba(93, 200, 141, 0.3);
+  border-radius: 8px;
+  background: #14141c;
+}
+.fire-activity-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+.fire-activity-header h3 {
+  margin: 0 0 4px;
+  font-size: 15px;
+}
+.fire-activity-header p {
+  margin: 0;
+  color: #a7adb7;
+  font-size: 10px;
+  line-height: 1.4;
+}
+.fire-activity-period {
+  flex: 0 0 auto;
+  padding: 4px 6px;
+  border-radius: 4px;
+  background: rgba(33, 144, 141, 0.18);
+  color: #83d2ca;
+  font-size: 9px;
+}
+.fire-activity-ratio {
+  display: flex;
+  align-items: baseline;
+  gap: 9px;
+  margin-top: 12px;
+}
+.fire-activity-ratio strong {
+  color: #fde725;
+  font-size: 31px;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+.fire-activity-ratio span {
+  color: #c5c6ce;
+  font-size: 11px;
+  line-height: 1.4;
+}
+.fire-activity-rank {
+  margin: 6px 0 10px;
+  color: #9c9eaa;
+  font-size: 10px;
+}
+.fire-activity-totals {
+  display: grid;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+.fire-activity-total {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 6px 8px;
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.035);
+  font-size: 10px;
+}
+.fire-activity-total > span {
+  color: #c4c4cc;
+}
+.fire-activity-total strong {
+  color: #e7e8eb;
+  font-size: 11px;
+  text-align: right;
+  white-space: nowrap;
+}
+.fire-activity-total small {
+  color: #898c98;
+  font-size: 9px;
+  font-weight: 400;
+}
+.fire-activity-chart {
+  padding-top: 2px;
+}
+.fire-activity-chart-alt {
+  margin: 0 0 6px;
+  color: #898c98;
+  font-size: 9px;
+  line-height: 1.4;
+}
+.fire-activity-year {
+  display: grid;
+  width: 100%;
+  grid-template-columns: 38px minmax(0, 1fr) 42px;
+  align-items: center;
+  gap: 7px;
+  min-height: 19px;
+  padding: 2px 4px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  background: transparent;
+  color: #c3c4cc;
+  text-align: left;
+  cursor: pointer;
+}
+.fire-activity-year:hover {
+  border-color: rgba(93, 200, 195, 0.32);
+  background: rgba(33, 144, 141, 0.1);
+}
+.fire-activity-year.reference {
+  border-color: rgba(253, 231, 37, 0.48);
+  background: rgba(253, 231, 37, 0.08);
+  color: #fff7b2;
+}
+.fire-activity-year-label,
+.fire-activity-value {
+  font-size: 9px;
+  font-variant-numeric: tabular-nums;
+}
+.fire-activity-value {
+  color: #a8aab3;
+  text-align: right;
+}
+.fire-activity-track {
+  display: block;
+  height: 7px;
+  overflow: hidden;
+  border-radius: 3px;
+  background: #24242d;
+}
+.fire-activity-bar {
+  display: block;
+  height: 100%;
+  min-width: 2px;
+  border-radius: inherit;
+}
+.fire-activity-era-marker {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin: 5px 0 3px 42px;
+  color: #80c9c4;
+  font-size: 8px;
+  letter-spacing: 0.02em;
+}
+.fire-activity-era-line {
+  height: 1px;
+  flex: 1;
+  background: linear-gradient(90deg, rgba(103, 200, 192, 0.2), #67c8c0);
+}
+.fire-activity-note {
+  margin: 10px 0 0;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  color: #9a9ba5;
+  font-size: 9px;
+  line-height: 1.45;
+}
 .cmp {
   margin: 0 0 12px;
   padding: 10px 12px;
