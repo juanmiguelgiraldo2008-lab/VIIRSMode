@@ -4,11 +4,13 @@
 
 Built for the NASA Space Apps Challenge 2026 (Montreal) · Challenge: *Harmonization of MODIS and VIIRS Hot Spots*
 
-- Demo video: <YouTube link>
-- Source code: <repository link>
+- Demo video: <YouTube link> https://youtu.be/2HG0qMA6Svs
 - **Live demo:** https://viirsmode.netlify.app/
-
+- Source code: https://github.com/juanmiguelgiraldo2008-lab/VIIRSMode
 <!-- Add a screenshot or GIF here: ![ViirsMode](docs/screenshot.png) -->
+
+<img width="1875" height="877" alt="image" src="https://github.com/user-attachments/assets/3929c71e-8ec5-473c-ac9e-230f4a54d90c" />
+
 
 ## The problem
 
