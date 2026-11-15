@@ -66,6 +66,11 @@ const months = computed(() =>
 const exportRows = computed(() =>
   filterByYears(areaAllYears.value, range.from, range.to),
 );
+const harmonizedCount = computed(() =>
+  Math.round(
+    exportRows.value.reduce((sum, hotspot) => sum + (hotspot.weight ?? 1), 0),
+  ),
+);
 
 function setArea(lat, lon) {
   area.lat = Number(lat.toFixed(3));
@@ -73,8 +78,9 @@ function setArea(lat, lon) {
 }
 
 function onGlobeSelect({ lat, lon, hotspot }) {
+  if (!hotspot) return;
   setArea(lat, lon);
-  if (hotspot) area.radiusKm = 50;
+  area.radiusKm = 50;
   selection.value = { lat, lon, name: null, hotspot };
   panelOpen.value = true;
 }
@@ -112,13 +118,14 @@ function download() {
       >
     </header>
 
-    <SearchBar :area="area" :range="range" @found="onFound" />
+    <SearchBar :range="range" @found="onFound" />
 
     <InfoPanel
       v-if="panelOpen"
       :selection="selection"
       :months="months"
       :count="exportRows.length"
+      :harmonized-count="harmonizedCount"
       :range="range"
       @close="panelOpen = false"
       @download="download"

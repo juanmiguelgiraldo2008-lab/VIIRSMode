@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from 'vue';
 
-defineProps({ area: Object, range: Object });
+defineProps({ range: Object });
 const emit = defineEmits(['found']);
 
 const query = ref('');
@@ -71,16 +71,6 @@ async function search() {
       <button type="button" :disabled="busy" @click="search">Go</button>
     </div>
     <div class="search-opts">
-      <label
-        >Radius (km)
-        <input
-          type="number"
-          min="10"
-          max="1000"
-          step="10"
-          v-model.number="area.radiusKm"
-        />
-      </label>
       <label
         >From year
         <input

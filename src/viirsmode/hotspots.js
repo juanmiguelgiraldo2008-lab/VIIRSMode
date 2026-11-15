@@ -79,6 +79,25 @@ export function filterByYears(hotspots, fromYear, toYear) {
   });
 }
 
+export function hotspotsInView(hotspots, bounds, maxPoints) {
+  const { west, east, south, north } = bounds;
+  const inView = hotspots.filter((hotspot) => {
+    const longitudeVisible =
+      west <= east
+        ? hotspot.lon >= west && hotspot.lon <= east
+        : hotspot.lon >= west || hotspot.lon <= east;
+    return (
+      Number.isFinite(hotspot.lat) &&
+      Number.isFinite(hotspot.lon) &&
+      hotspot.lat >= south &&
+      hotspot.lat <= north &&
+      longitudeVisible
+    );
+  });
+  const step = Math.max(1, Math.ceil(inView.length / maxPoints));
+  return inView.filter((_, index) => index % step === 0);
+}
+
 export function filterHotspots(hotspots, area, fromYear, toYear) {
   const b = areaBbox(area);
   return hotspots.filter((h) => {

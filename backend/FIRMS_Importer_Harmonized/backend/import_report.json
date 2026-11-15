@@ -1,5 +1,19 @@
 {
   "mode": "daily proximity and FRP grouping",
+  "source_rows": 236559,
+  "excluded_rows": 7486,
+  "type_filter": {
+    "included": [
+      "0",
+      "missing"
+    ],
+    "excluded": [
+      "1",
+      "2",
+      "3"
+    ],
+    "reason": "retain presumed vegetation fire detections"
+  },
   "total": 109513,
   "files": [
     {
@@ -980,8 +994,10 @@
       "after": 9086
     }
   ],
+  "harmonization_weight_method": "per year: MODIS-containing groups / all groups; pre-VIIRS years use 1.0",
   "harmonization": [
     {
+      "epoch": "2000-2011",
       "viirs_satellites": [],
       "years": [
         "2000",
@@ -999,9 +1015,13 @@
       ],
       "groups": 32102,
       "modis_groups": 32102,
-      "weight": 1.0
+      "weight": 1.0,
+      "weight_scope": "pooled epoch diagnostic; applied weights are per year",
+      "weighted_groups": 32102.0,
+      "difference_from_modis": 0.0
     },
     {
+      "epoch": "2012-2017",
       "viirs_satellites": [
         "N"
       ],
@@ -1015,9 +1035,13 @@
       ],
       "groups": 39588,
       "modis_groups": 18122,
-      "weight": 0.4578
+      "weight": 0.4578,
+      "weight_scope": "pooled epoch diagnostic; applied weights are per year",
+      "weighted_groups": 18122.115,
+      "difference_from_modis": 0.115
     },
     {
+      "epoch": "2018+",
       "viirs_satellites": [
         "N",
         "N20"
@@ -1034,7 +1058,308 @@
       ],
       "groups": 37823,
       "modis_groups": 13193,
-      "weight": 0.3488
+      "weight": 0.3488,
+      "weight_scope": "pooled epoch diagnostic; applied weights are per year",
+      "weighted_groups": 13192.6455,
+      "difference_from_modis": -0.3545
+    }
+  ],
+  "yearly_harmonization": [
+    {
+      "year": 2000,
+      "epoch": "2000-2011",
+      "viirs_satellites": [],
+      "groups": 3,
+      "modis_groups": 3,
+      "weight": 1.0,
+      "weighted_groups": 3.0,
+      "difference_from_modis": 0.0
+    },
+    {
+      "year": 2001,
+      "epoch": "2000-2011",
+      "viirs_satellites": [],
+      "groups": 1390,
+      "modis_groups": 1390,
+      "weight": 1.0,
+      "weighted_groups": 1390.0,
+      "difference_from_modis": 0.0
+    },
+    {
+      "year": 2002,
+      "epoch": "2000-2011",
+      "viirs_satellites": [],
+      "groups": 2277,
+      "modis_groups": 2277,
+      "weight": 1.0,
+      "weighted_groups": 2277.0,
+      "difference_from_modis": 0.0
+    },
+    {
+      "year": 2003,
+      "epoch": "2000-2011",
+      "viirs_satellites": [],
+      "groups": 5042,
+      "modis_groups": 5042,
+      "weight": 1.0,
+      "weighted_groups": 5042.0,
+      "difference_from_modis": 0.0
+    },
+    {
+      "year": 2004,
+      "epoch": "2000-2011",
+      "viirs_satellites": [],
+      "groups": 2589,
+      "modis_groups": 2589,
+      "weight": 1.0,
+      "weighted_groups": 2589.0,
+      "difference_from_modis": 0.0
+    },
+    {
+      "year": 2005,
+      "epoch": "2000-2011",
+      "viirs_satellites": [],
+      "groups": 7511,
+      "modis_groups": 7511,
+      "weight": 1.0,
+      "weighted_groups": 7511.0,
+      "difference_from_modis": 0.0
+    },
+    {
+      "year": 2006,
+      "epoch": "2000-2011",
+      "viirs_satellites": [],
+      "groups": 2137,
+      "modis_groups": 2137,
+      "weight": 1.0,
+      "weighted_groups": 2137.0,
+      "difference_from_modis": 0.0
+    },
+    {
+      "year": 2007,
+      "epoch": "2000-2011",
+      "viirs_satellites": [],
+      "groups": 1376,
+      "modis_groups": 1376,
+      "weight": 1.0,
+      "weighted_groups": 1376.0,
+      "difference_from_modis": 0.0
+    },
+    {
+      "year": 2008,
+      "epoch": "2000-2011",
+      "viirs_satellites": [],
+      "groups": 899,
+      "modis_groups": 899,
+      "weight": 1.0,
+      "weighted_groups": 899.0,
+      "difference_from_modis": 0.0
+    },
+    {
+      "year": 2009,
+      "epoch": "2000-2011",
+      "viirs_satellites": [],
+      "groups": 2911,
+      "modis_groups": 2911,
+      "weight": 1.0,
+      "weighted_groups": 2911.0,
+      "difference_from_modis": 0.0
+    },
+    {
+      "year": 2010,
+      "epoch": "2000-2011",
+      "viirs_satellites": [],
+      "groups": 3430,
+      "modis_groups": 3430,
+      "weight": 1.0,
+      "weighted_groups": 3430.0,
+      "difference_from_modis": 0.0
+    },
+    {
+      "year": 2011,
+      "epoch": "2000-2011",
+      "viirs_satellites": [],
+      "groups": 2537,
+      "modis_groups": 2537,
+      "weight": 1.0,
+      "weighted_groups": 2537.0,
+      "difference_from_modis": 0.0
+    },
+    {
+      "year": 2012,
+      "epoch": "2012-2017",
+      "viirs_satellites": [
+        "N"
+      ],
+      "groups": 6616,
+      "modis_groups": 2938,
+      "weight": 0.4441,
+      "weighted_groups": 2938.1656,
+      "difference_from_modis": 0.1656
+    },
+    {
+      "year": 2013,
+      "epoch": "2012-2017",
+      "viirs_satellites": [
+        "N"
+      ],
+      "groups": 7782,
+      "modis_groups": 3613,
+      "weight": 0.4643,
+      "weighted_groups": 3613.1826,
+      "difference_from_modis": 0.1826
+    },
+    {
+      "year": 2014,
+      "epoch": "2012-2017",
+      "viirs_satellites": [
+        "N"
+      ],
+      "groups": 1568,
+      "modis_groups": 533,
+      "weight": 0.3399,
+      "weighted_groups": 532.9632,
+      "difference_from_modis": -0.0368
+    },
+    {
+      "year": 2015,
+      "epoch": "2012-2017",
+      "viirs_satellites": [
+        "N"
+      ],
+      "groups": 4331,
+      "modis_groups": 1783,
+      "weight": 0.4117,
+      "weighted_groups": 1783.0727,
+      "difference_from_modis": 0.0727
+    },
+    {
+      "year": 2016,
+      "epoch": "2012-2017",
+      "viirs_satellites": [
+        "N"
+      ],
+      "groups": 7742,
+      "modis_groups": 3726,
+      "weight": 0.4813,
+      "weighted_groups": 3726.2246,
+      "difference_from_modis": 0.2246
+    },
+    {
+      "year": 2017,
+      "epoch": "2012-2017",
+      "viirs_satellites": [
+        "N"
+      ],
+      "groups": 11549,
+      "modis_groups": 5529,
+      "weight": 0.4787,
+      "weighted_groups": 5528.5063,
+      "difference_from_modis": -0.4937
+    },
+    {
+      "year": 2018,
+      "epoch": "2018+",
+      "viirs_satellites": [
+        "N",
+        "N20"
+      ],
+      "groups": 3353,
+      "modis_groups": 1063,
+      "weight": 0.317,
+      "weighted_groups": 1062.901,
+      "difference_from_modis": -0.099
+    },
+    {
+      "year": 2019,
+      "epoch": "2018+",
+      "viirs_satellites": [
+        "N",
+        "N20"
+      ],
+      "groups": 3891,
+      "modis_groups": 1083,
+      "weight": 0.2783,
+      "weighted_groups": 1082.8653,
+      "difference_from_modis": -0.1347
+    },
+    {
+      "year": 2020,
+      "epoch": "2018+",
+      "viirs_satellites": [
+        "N",
+        "N20"
+      ],
+      "groups": 3542,
+      "modis_groups": 1134,
+      "weight": 0.3202,
+      "weighted_groups": 1134.1484,
+      "difference_from_modis": 0.1484
+    },
+    {
+      "year": 2021,
+      "epoch": "2018+",
+      "viirs_satellites": [
+        "N",
+        "N20"
+      ],
+      "groups": 2959,
+      "modis_groups": 841,
+      "weight": 0.2842,
+      "weighted_groups": 840.9478,
+      "difference_from_modis": -0.0522
+    },
+    {
+      "year": 2022,
+      "epoch": "2018+",
+      "viirs_satellites": [
+        "N",
+        "N20"
+      ],
+      "groups": 5093,
+      "modis_groups": 1898,
+      "weight": 0.3727,
+      "weighted_groups": 1898.1611,
+      "difference_from_modis": 0.1611
+    },
+    {
+      "year": 2023,
+      "epoch": "2018+",
+      "viirs_satellites": [
+        "N",
+        "N20"
+      ],
+      "groups": 3010,
+      "modis_groups": 878,
+      "weight": 0.2917,
+      "weighted_groups": 878.017,
+      "difference_from_modis": 0.017
+    },
+    {
+      "year": 2024,
+      "epoch": "2018+",
+      "viirs_satellites": [
+        "N",
+        "N20"
+      ],
+      "groups": 6889,
+      "modis_groups": 2408,
+      "weight": 0.3495,
+      "weighted_groups": 2407.7055,
+      "difference_from_modis": -0.2945
+    },
+    {
+      "year": 2025,
+      "epoch": "2018+",
+      "viirs_satellites": [
+        "N",
+        "N20"
+      ],
+      "groups": 9086,
+      "modis_groups": 3888,
+      "weight": 0.4279,
+      "weighted_groups": 3887.8994,
+      "difference_from_modis": -0.1006
     }
   ]
 }

@@ -66,7 +66,7 @@ const barMax = computed(() =>
       </select>
     </div>
     <div class="cmp-row">
-      <span>This month</span>
+      <span>Weighted groups</span>
       <span
         class="cmp-bar"
         :style="{
@@ -77,7 +77,7 @@ const barMax = computed(() =>
       <b>{{ result.count }}</b>
     </div>
     <div class="cmp-row">
-      <span>Median</span>
+      <span>Weighted median</span>
       <span
         class="cmp-bar"
         :style="{

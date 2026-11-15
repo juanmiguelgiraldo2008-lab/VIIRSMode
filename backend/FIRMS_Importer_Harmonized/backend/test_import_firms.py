@@ -46,6 +46,22 @@ class ImportTests(unittest.TestCase):
                              ["2018-01-01"] * 2 + ["2025-01-01"] * 2)
             self.assertEqual(sum(r["after"] for r in report["counts"]), 4)
 
+    def test_type_filter_is_reported_and_excludes_non_vegetation_types(self):
+        with TemporaryDirectory() as directory:
+            path = Path(directory) / "typed.csv"
+            path.write_text(
+                "latitude,longitude,acq_date,instrument,satellite,frp,type\n"
+                "40,-8,2024-01-01,MODIS,Terra,3,0\n"
+                "40,-8,2024-01-01,MODIS,Terra,3,1\n"
+                "40,-8,2024-01-01,MODIS,Terra,3,2\n"
+                "40,-8,2024-01-01,MODIS,Terra,3,3\n"
+                "40,-8,2024-01-01,MODIS,Terra,3,\n")
+            rows, report = read_files([path])
+            self.assertEqual(len(rows), 2)
+            self.assertEqual(report["source_rows"], 5)
+            self.assertEqual(report["excluded_rows"], 3)
+            self.assertEqual(report["type_filter"]["included"], ["0", "missing"])
+
 
 if __name__ == "__main__":
     unittest.main()

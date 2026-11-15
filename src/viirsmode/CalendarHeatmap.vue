@@ -69,7 +69,7 @@ function countFor(year, month) {
         :key="month"
         class="cal-cell"
         :style="{ background: colorFor(countFor(year, month)) }"
-        :title="`${MONTH_NAMES[month - 1]} ${year}: ${countFor(year, month) ?? 'no data'} hotspots`"
+        :title="`${MONTH_NAMES[month - 1]} ${year}: ${countFor(year, month) ?? 'no data'} MODIS-equivalent groups`"
       ></span>
     </div>
     <div class="cal-legend">

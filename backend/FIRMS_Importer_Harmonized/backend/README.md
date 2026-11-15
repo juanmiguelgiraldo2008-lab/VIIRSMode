@@ -25,7 +25,32 @@ On Windows, `py` can replace `python`. Each run rebuilds the outputs; it does no
 
 All members are within the specified radius of their fixed representative. Members on opposite sides may be up to twice that distance apart. Nearby chains cannot extend a group's radius. A 3D spatial index handles longitude wraparound and the poles; full-file order does not change results. All detections count, including same-sensor observations and identical repeated records.
 
-These are adjustable display heuristics, NOT scientifically calibrated event matching, unique wildfire counts, fire severity levels, or a correction for MODIS/VIIRS sensitivity differences. FRP is radiative power in MW, not a danger rating. Sensor resolution, observation time and fire evolution can cause different FRP values for the same fire; conversely, distinct fires nearby can be grouped. The importer uses calendar date, not acquisition time; observations on either side of UTC midnight remain separate. Confidence and type filters are not applied.
+These are adjustable display heuristics, NOT scientifically calibrated event matching, unique wildfire counts, fire severity levels, or a correction for MODIS/VIIRS sensitivity differences. FRP is radiative power in MW, not a danger rating. Sensor resolution, observation time and fire evolution can cause different FRP values for the same fire; conversely, distinct fires nearby can be grouped. The importer uses calendar date, not acquisition time; observations on either side of UTC midnight remain separate. Confidence is not filtered. Rows whose FIRMS `type` is `0` (presumed vegetation fire) or missing are retained; types `1`, `2`, and `3` are excluded from the vegetation-burning analysis. The report records both source rows and exclusions.
+
+## Harmonization weights
+
+The app compares annual activity with the MODIS record as its reference. After
+daily grouping, each year with VIIRS receives:
+
+```text
+weight = groups containing MODIS / all groups that year
+weighted annual groups = all groups that year * weight
+```
+
+This makes each year's weighted group total approximately equal to its
+MODIS-containing group count; weights are rounded to four decimal places.
+Pre-VIIRS years retain weight `1.0`. If VIIRS groups exist in a year with no
+MODIS reference groups, the importer stops rather than inventing a weight.
+The `harmonization` report section retains pooled epoch summaries for
+2000–2011, 2012–2017, and 2018 onward; `yearly_harmonization` lists each
+applied annual weight and its comparison with MODIS. Epoch weights are
+diagnostic averages, not the weights assigned to every record in that epoch.
+
+This is a transparent MODIS-reference normalization, not a NASA-provided
+cross-sensor calibration. Annual equality to MODIS is a property of the
+chosen formula, not independent evidence that the grouped observations are
+scientifically equivalent. Review annual and monthly coverage before using
+the results for operational decisions.
 
 NASA reference: https://forum.earthdata.nasa.gov/viewtopic.php?t=5189
 MODIS/VIIRS FRP comparison: https://repository.library.noaa.gov/view/noaa/49896/noaa_49896_DS1.pdf
@@ -58,19 +83,22 @@ python backend/import_firms.py --input /path/to/NASA_Data
 | backend/test_import_firms.py, backend/test_merge.py | Tests |
 | backend/.gitignore | Excludes local raw data and environment files |
 | backend/README.md | This guide |
-| public/viirsmode/hotspots.csv | Six-column app data: lat,lon,date,sensor,satellite,frp |
-| backend/hotspots.json | Compact JSON array with the same six fields and group metadata |
-| backend/import_report.json | Input file counts, raw counts per sensor/satellite/year, totals before/after by year, parameters |
+| backend/FIRMS_Importer_Harmonized/public/viirsmode/hotspots.csv | Package's generated CSV copy |
+| public/viirsmode/hotspots.csv | App-served data: lat,lon,date,sensor,satellite,frp,weight |
+| backend/hotspots.json | Compact JSON array with the seven fields plus group metadata |
+| backend/import_report.json | Source/type counts, exclusions, grouping parameters, and epoch/year harmonization diagnostics |
 
-JSON metadata: `detection_count`, `frp_min`, `frp_max`, `sensors`, `satellites`. The singular sensor and satellite identify ONLY the representative measurement. Arrays identify all contributors. A mixed group is not exclusively assigned to any one sensor. In --no-merge mode JSON has only the original six fields.
+JSON metadata: `detection_count`, `frp_min`, `frp_max`, `sensors`, `satellites`. The singular sensor and satellite identify ONLY the representative measurement. Arrays identify all contributors. A mixed group is not exclusively assigned to any one sensor. In --no-merge mode JSON has the seven normalized fields.
 
-The CSV has exactly the original header. Its rows now represent groups, so the calendar should label counts as "daily hotspot groups". Sensor filtering on the CSV selects representative sensors, not every contributing sensor. The backend JSON is not automatically a publicly served URL. No src/ files are included or changed; globe runtime compatibility still needs checking in the full application repository.
+The CSV header is `lat,lon,date,sensor,satellite,frp,weight`. Its rows represent groups, so counts should distinguish daily groups from MODIS-equivalent weighted groups. Sensor filtering on the CSV selects representative sensors, not every contributing sensor. The backend JSON is not automatically a publicly served URL.
 
 Uploading the importer to GitHub does not automatically run it. Run it locally and commit the generated outputs. GitHub Actions would additionally need an accessible raw-data source; ignored files on your computer are not available to Actions.
 
-## Included sample result
+## Data availability
 
-The three available 2018 Portugal CSVs contain 8,809 detections (1,310 MODIS and 7,499 VIIRS). Default grouping produces 3,724 daily hotspot groups; 5,085 rows are folded into other representative points. JSON detection counts sum back to 8,809. Raw CSVs are not included in this package.
+The output totals depend on the raw FIRMS files supplied under `backend/data/`,
+which are not included in this package. The report records the number of source
+rows, retained detections, type exclusions, and grouped records for each run.
 
 ## Tests
 

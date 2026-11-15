@@ -1,7 +1,7 @@
 <script setup>
 import { onMounted, onBeforeUnmount, ref, watch } from 'vue';
 import * as Cesium from 'cesium';
-import { areaBbox } from './hotspots.js';
+import { hotspotsInView } from './hotspots.js';
 
 const props = defineProps({
   area: { type: Object, required: true },
@@ -9,60 +9,50 @@ const props = defineProps({
 });
 const emit = defineEmits(['select']);
 
-const MAX_POINTS = 20000;
+const MAX_POINTS = 6000;
+const MAX_HOTSPOT_VIEW_HEIGHT = 8000000;
 const container = ref(null);
 const shown = ref(0);
 let viewer = null;
 let handler = null;
 let points = null;
-
-function drawArea() {
-  if (!viewer) return;
-  const { lat, lon, radiusKm } = props.area;
-  if (![lat, lon, radiusKm].every(Number.isFinite)) return;
-  const b = areaBbox(props.area);
-  viewer.entities.removeAll();
-  viewer.entities.add({
-    position: Cesium.Cartesian3.fromDegrees(lon, lat),
-    point: {
-      pixelSize: 10,
-      color: Cesium.Color.CYAN,
-      outlineColor: Cesium.Color.WHITE,
-      outlineWidth: 2,
-    },
-  });
-  viewer.entities.add({
-    rectangle: {
-      coordinates: Cesium.Rectangle.fromDegrees(
-        b.west,
-        b.south,
-        b.east,
-        b.north,
-      ),
-      material: Cesium.Color.CYAN.withAlpha(0.03),
-      outline: true,
-      outlineColor: Cesium.Color.CYAN,
-      height: 0,
-    },
-  });
-}
+let onCameraMoveEnd = null;
 
 function drawHotspots() {
   if (!viewer || !points) return;
   points.removeAll();
-  const list = props.hotspots;
-  const step = Math.max(1, Math.ceil(list.length / MAX_POINTS));
+  const cameraHeight = viewer.camera.positionCartographic.height;
+  if (cameraHeight > MAX_HOTSPOT_VIEW_HEIGHT) {
+    shown.value = 0;
+    return;
+  }
+  const rectangle = viewer.camera.computeViewRectangle(
+    viewer.scene.globe.ellipsoid,
+  );
+  if (!rectangle) {
+    shown.value = 0;
+    return;
+  }
+  const bounds = {
+    west: Cesium.Math.toDegrees(rectangle.west),
+    east: Cesium.Math.toDegrees(rectangle.east),
+    south: Cesium.Math.toDegrees(rectangle.south),
+    north: Cesium.Math.toDegrees(rectangle.north),
+  };
+  const pointLimit = Math.max(
+    300,
+    Math.floor((MAX_POINTS * 1800000) / Math.max(cameraHeight, 1)),
+  );
+  const list = hotspotsInView(props.hotspots, bounds, pointLimit);
   let count = 0;
-  for (let i = 0; i < list.length; i += step) {
-    const h = list[i];
-    if (!Number.isFinite(h.lat) || !Number.isFinite(h.lon)) continue;
+  for (const h of list) {
     points.add({
       id: h,
       position: Cesium.Cartesian3.fromDegrees(h.lon, h.lat, 100),
-      pixelSize: 4,
+      pixelSize: 3,
       color: h.sensor === 'MODIS' ? Cesium.Color.YELLOW : Cesium.Color.RED,
       outlineColor: Cesium.Color.BLACK.withAlpha(0.6),
-      outlineWidth: 0.5,
+      outlineWidth: 0,
     });
     count++;
   }
@@ -117,36 +107,27 @@ onMounted(() => {
       1800000,
     ),
   });
-  drawArea();
   drawHotspots();
+
+  onCameraMoveEnd = () => drawHotspots();
+  viewer.camera.moveEnd.addEventListener(onCameraMoveEnd);
 
   handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
   handler.setInputAction((click) => {
     const picked = viewer.scene.pick(click.position);
     const hotspot = picked?.id?.date ? picked.id : null;
-    if (hotspot) {
-      emit('select', { lat: hotspot.lat, lon: hotspot.lon, hotspot });
-      return;
-    }
-    const cartesian = viewer.camera.pickEllipsoid(
-      click.position,
-      viewer.scene.globe.ellipsoid,
-    );
-    if (!cartesian) return;
-    const c = Cesium.Cartographic.fromCartesian(cartesian);
-    emit('select', {
-      lat: Cesium.Math.toDegrees(c.latitude),
-      lon: Cesium.Math.toDegrees(c.longitude),
-      hotspot: null,
-    });
+    if (!hotspot) return;
+    emit('select', { lat: hotspot.lat, lon: hotspot.lon, hotspot });
   }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
 });
 
-watch(() => [props.area.lat, props.area.lon, props.area.radiusKm], drawArea);
 watch(() => props.hotspots, drawHotspots);
 
 onBeforeUnmount(() => {
   handler?.destroy();
+  if (onCameraMoveEnd) {
+    viewer?.camera.moveEnd.removeEventListener(onCameraMoveEnd);
+  }
   viewer?.destroy();
 });
 </script>
@@ -157,9 +138,9 @@ onBeforeUnmount(() => {
     <div class="globe-legend">
       <span><i class="dot modis"></i> MODIS</span>
       <span><i class="dot viirs"></i> VIIRS</span>
-      <span class="globe-count"
-        >{{ shown }} of {{ hotspots.length }} shown</span
-      >
+      <span class="globe-count">
+        {{ shown ? `${shown} hotspots` : 'Zoom in to view hotspots' }}
+      </span>
     </div>
   </div>
 </template>

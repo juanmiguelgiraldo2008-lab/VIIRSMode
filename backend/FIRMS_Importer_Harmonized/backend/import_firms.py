@@ -18,6 +18,7 @@ SATELLITES = {"TERRA": ("Terra", "MODIS"), "AQUA": ("Aqua", "MODIS"),
               "N21": ("N21", "VIIRS"), "NOAA-21": ("N21", "VIIRS"),
               "JPSS-2": ("N21", "VIIRS")}
 BACKEND = Path(__file__).resolve().parent
+PROJECT_ROOT = BACKEND.parents[2]
 
 
 def unique_files(paths):
@@ -52,9 +53,11 @@ def normalize(row):
 
 
 def read_files(paths):
-    """Read all files and years; retain every valid detection, including repeats."""
+    """Retain valid type-0 or unclassified detections, including repeated rows."""
     hotspots, files = [], []
     counts = Counter()
+    source_rows = 0
+    excluded_rows = 0
     for path in sorted(paths):
         types = Counter()
         count = 0
@@ -75,13 +78,19 @@ def read_files(paths):
                 kind = row.get("type", "").strip()
                 types[kind or "missing"] += 1
                 count += 1
+                source_rows += 1
                 if kind not in ("", "0"):
+                    excluded_rows += 1
                     continue
                 hotspots.append(hotspot)
                 counts[(hotspot["date"][:4], hotspot["sensor"], hotspot["satellite"])] += 1
         files.append(dict(file=path.name, rows=count, type_counts=dict(sorted(types.items()))))
     hotspots.sort(key=lambda r: (r["date"], r["sensor"], r["satellite"], r["lat"], r["lon"]))
-    report = dict(mode="schema normalization only; no filtering or deduplication",
+    report = dict(mode="schema normalization; type 0 or missing retained",
+                  source_rows=source_rows, excluded_rows=excluded_rows,
+                  type_filter=dict(included=["0", "missing"],
+                                   excluded=["1", "2", "3"],
+                                   reason="retain presumed vegetation fire detections"),
                   total=len(hotspots), files=files,
                   counts=[dict(year=int(year), sensor=sensor, satellite=satellite,
                                before=n, after=n)
@@ -136,12 +145,7 @@ def merge_hotspots(rows, radius_km=1.0, frp_ratio=2.0, frp_absolute=2.0):
 
 
 def harmonization_weights(groups):
-    """Weight per year so counts are comparable to the MODIS-only record.
-
-    Years are grouped by era (same set of VIIRS satellites). In an era with VIIRS,
-    weight = groups containing MODIS / all groups, so the era total matches what
-    MODIS alone would have shown. Years before VIIRS keep weight 1.
-    """
+    """Return annual MODIS-reference weights and pooled epoch diagnostics."""
     years = defaultdict(lambda: dict(total=0, modis=0, sats=set()))
     for g in groups:
         year = g["date"][:4]
@@ -149,20 +153,62 @@ def harmonization_weights(groups):
         years[year]["total"] += 1
         years[year]["modis"] += "MODIS" in sensors
         years[year]["sats"].update(g.get("satellites", [g["satellite"]]))
-    eras = defaultdict(list)
-    for year, data in years.items():
-        viirs = frozenset(s for s in data["sats"] if s not in ("Terra", "Aqua"))
-        eras[viirs].append(year)
-    weights, report = {}, []
-    for viirs, era_years in sorted(eras.items(), key=lambda kv: min(kv[1])):
-        total = sum(years[y]["total"] for y in era_years)
-        modis = sum(years[y]["modis"] for y in era_years)
-        weight = modis / total if viirs and total and modis else 1.0
-        for year in era_years:
-            weights[year] = round(weight, 4)
-        report.append(dict(viirs_satellites=sorted(viirs), years=sorted(era_years),
-                           groups=total, modis_groups=modis, weight=round(weight, 4)))
-    return weights, report
+    weights, annual_report = {}, []
+    eras = {
+        epoch: dict(total=0, modis=0, sats=set(), years=[])
+        for epoch in ("2000-2011", "2012-2017", "2018+")
+    }
+
+    def epoch_for(year):
+        numeric_year = int(year)
+        if numeric_year < 2012:
+            return "2000-2011"
+        if numeric_year < 2018:
+            return "2012-2017"
+        return "2018+"
+
+    for year, data in sorted(years.items()):
+        epoch = epoch_for(year)
+        viirs = sorted(s for s in data["sats"] if s not in ("Terra", "Aqua"))
+        if viirs and not data["modis"]:
+            raise ValueError(
+                f"Cannot harmonize {year}: VIIRS groups have no MODIS reference groups")
+        raw_weight = data["modis"] / data["total"] if viirs else 1.0
+        weight = round(raw_weight, 4)
+        weights[year] = weight
+        weighted_groups = data["total"] * weight
+        annual_report.append(dict(
+            year=int(year), epoch=epoch, viirs_satellites=viirs,
+            groups=data["total"], modis_groups=data["modis"], weight=weight,
+            weighted_groups=round(weighted_groups, 4),
+            difference_from_modis=round(weighted_groups - data["modis"], 4)))
+
+        era = eras[epoch]
+        era["total"] += data["total"]
+        era["modis"] += data["modis"]
+        era["sats"].update(viirs)
+        era["years"].append(year)
+
+    epoch_report = []
+    for epoch, data in eras.items():
+        if not data["years"]:
+            continue
+        total, modis = data["total"], data["modis"]
+        satellites = sorted(data["sats"])
+        pooled_weight = modis / total if satellites and modis else 1.0
+        weighted_total = sum(
+            data["total"] * weights[year]
+            for year, data in years.items()
+            if epoch_for(year) == epoch
+        )
+        epoch_report.append(dict(
+            epoch=epoch, viirs_satellites=satellites,
+            years=sorted(data["years"]),
+            groups=total, modis_groups=modis, weight=round(pooled_weight, 4),
+            weight_scope="pooled epoch diagnostic; applied weights are per year",
+            weighted_groups=round(weighted_total, 4),
+            difference_from_modis=round(weighted_total - modis, 4)))
+    return weights, epoch_report, annual_report
 
 
 def build_hotspots(input_dir=BACKEND / "data", *, merge=True, radius_km=1.0,
@@ -178,7 +224,7 @@ def build_hotspots(input_dir=BACKEND / "data", *, merge=True, radius_km=1.0,
     if merge:
         hotspots = merge_hotspots(original, radius_km, frp_ratio, frp_absolute)
 
-    weights, harmonization = harmonization_weights(hotspots)
+    weights, harmonization, yearly_harmonization = harmonization_weights(hotspots)
     for row in hotspots:
         row["weight"] = weights[row["date"][:4]]
     before = Counter(r['date'][:4] for r in original)
@@ -194,17 +240,29 @@ def build_hotspots(input_dir=BACKEND / "data", *, merge=True, radius_km=1.0,
                   parameters=dict(radius_km=radius_km, frp_ratio=frp_ratio,
                                   frp_absolute_mw=frp_absolute) if merge else None,
                   counts_by_year=[dict(year=int(y), before=before[y], after=after[y])
-                                  for y in sorted(before)])
+                                  for y in sorted(before)],
+                  harmonization_weight_method=(
+                      "per year: MODIS-containing groups / all groups; "
+                      "pre-VIIRS years use 1.0"),
+                  source_rows=report["source_rows"],
+                  excluded_rows=report["excluded_rows"],
+                  type_filter=report["type_filter"])
 
     report["harmonization"] = harmonization
-    csv_path = BACKEND.parents[2] / "public" / "viirsmode" / "hotspots.csv"
-    csv_path.parent.mkdir(parents=True, exist_ok=True)
+    report["yearly_harmonization"] = yearly_harmonization
+    csv_paths = dict.fromkeys((
+        PROJECT_ROOT / "public" / "viirsmode" / "hotspots.csv",
+        BACKEND.parent / "public" / "viirsmode" / "hotspots.csv",
+    ))
+    for csv_path in csv_paths:
+        csv_path.parent.mkdir(parents=True, exist_ok=True)
     json_path = BACKEND / "hotspots.json"
     json_path.write_text(json.dumps(hotspots, separators=(",", ":"), allow_nan=False) + "\n", encoding="utf-8")
-    with csv_path.open("w", encoding="utf-8", newline="") as stream:
-        writer = csv.DictWriter(stream, fieldnames=FIELDS, extrasaction="ignore")
-        writer.writeheader()
-        writer.writerows(hotspots)
+    for csv_path in csv_paths:
+        with csv_path.open("w", encoding="utf-8", newline="") as stream:
+            writer = csv.DictWriter(stream, fieldnames=FIELDS, extrasaction="ignore")
+            writer.writeheader()
+            writer.writerows(hotspots)
     (BACKEND / "import_report.json").write_text(
         json.dumps(report, indent=2) + "\n", encoding="utf-8")
     return report
@@ -223,4 +281,4 @@ if __name__ == "__main__":
                                 frp_ratio=args.frp_ratio, frp_absolute=args.frp_absolute)
     except (ValueError, OSError) as error:
         parser.exit(1, f"Import failed: {error}\n")
-    print(f"Wrote {result['total']:,} hotspots to backend/hotspots.json and public/viirsmode/hotspots.csv")
+    print(f"Wrote {result['total']:,} hotspots to backend/hotspots.json and both public CSV copies")

@@ -7,6 +7,7 @@ defineProps({
   selection: Object,
   months: { type: Array, required: true },
   count: Number,
+  harmonizedCount: Number,
   range: Object,
 });
 defineEmits(['close', 'download']);
@@ -46,7 +47,8 @@ const TABS = [
         <p v-if="selection?.name">{{ selection.name }}</p>
         <p>{{ selection?.lat.toFixed(3) }}, {{ selection?.lon.toFixed(3) }}</p>
         <p
-          >{{ count }} hotspots in this area, {{ range.from }}–{{ range.to }}</p
+          >{{ count }} hotspot groups · {{ harmonizedCount }} MODIS-equivalent
+          groups, {{ range.from }}–{{ range.to }}</p
         >
       </div>
 
@@ -69,14 +71,14 @@ const TABS = [
       </div>
 
       <button class="info-btn" type="button" @click="$emit('download')">
-        Download CSV ({{ count }} hotspots)
+        Download CSV ({{ count }} groups)
       </button>
     </template>
 
     <template v-else-if="tab === 'calendar'">
       <div class="info-block">
         <h3>Burning activity calendar</h3>
-        <p>Hotspots per month in the selected area.</p>
+        <p>MODIS-equivalent groups per month in the selected area.</p>
         <CalendarHeatmap :months="months" />
       </div>
     </template>
@@ -100,10 +102,13 @@ const TABS = [
           activity look higher only because better sensors arrived.
         </p>
         <p>
-          In our sample files for Portugal in 2025, MODIS has 4,868 detections
-          and VIIRS 13,863. ViirsMode aims to harmonize the records so the
-          sensor of origin no longer matters and patterns, anomalies and trends
-          take over.
+          ViirsMode first groups detections from the same UTC day that fall
+          within 1 km and have similar fire power, so one fire seen by several
+          satellites counts once. Then, for each period with the same set of
+          VIIRS satellites, it scales the counts so their total matches what
+          MODIS alone recorded in that period. The result is one continuous
+          series in MODIS-equivalent units from 2000 to today. It is an
+          approximation, not a sensor calibration.
         </p>
       </div>
     </template>
