@@ -8,6 +8,7 @@ const props = defineProps({
   hotspots: { type: Array, default: () => [] },
   live: { type: Boolean, default: false },
   intro: { type: Boolean, default: false },
+  introTransitioning: { type: Boolean, default: false },
 });
 const emit = defineEmits(['select']);
 
@@ -96,8 +97,12 @@ function startIntro() {
   }
   return new Promise((resolve) => {
     viewer.camera.flyTo({
-      destination: Cesium.Cartesian3.fromDegrees(-18, 8, 8200000),
-      duration: 2.8,
+      destination: Cesium.Cartesian3.fromDegrees(
+        props.area.lon,
+        props.area.lat,
+        2500000,
+      ),
+      duration: 4.8,
       complete: resolve,
       cancel: resolve,
     });
@@ -183,7 +188,14 @@ onBeforeUnmount(() => {
 
 <template>
   <div class="globe-wrap">
-    <div ref="container" class="globe"></div>
+    <div
+      ref="container"
+      class="globe"
+      :class="{
+        'globe-intro-idle': intro && !introTransitioning,
+        'globe-intro-transitioning': introTransitioning,
+      }"
+    ></div>
     <div v-if="!intro" class="globe-legend">
       <span><i class="dot modis"></i> MODIS</span>
       <span><i class="dot viirs"></i> VIIRS</span>
@@ -202,6 +214,14 @@ onBeforeUnmount(() => {
 .globe {
   position: absolute;
   inset: 0;
+  opacity: 1;
+  transition: opacity 3.8s ease;
+}
+.globe-intro-idle {
+  opacity: 0;
+}
+.globe-intro-transitioning {
+  opacity: 1;
 }
 .globe-legend {
   position: absolute;

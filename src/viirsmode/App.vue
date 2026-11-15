@@ -8,6 +8,7 @@ import {
   ref,
 } from 'vue';
 import GlobeView from './GlobeView.vue';
+import IntroGlobe from './IntroGlobe.vue';
 import SearchBar from './SearchBar.vue';
 import InfoPanel from './InfoPanel.vue';
 import TimelineBar from './TimelineBar.vue';
@@ -296,6 +297,7 @@ async function saveMapKey() {
       :hotspots="displayedHotspots"
       :live="liveMode"
       :intro="!started"
+      :intro-transitioning="starting"
       @select="onGlobeSelect"
     />
 
@@ -342,6 +344,7 @@ async function saveMapKey() {
     <Transition name="intro">
       <main v-if="!started" class="intro-screen" :class="{ ready: introReady }">
         <div class="intro-stars" aria-hidden="true"></div>
+        <IntroGlobe :transitioning="starting" />
         <div class="intro-frame">
           <header class="intro-header">
             <a class="intro-wordmark" href="#" @click.prevent>

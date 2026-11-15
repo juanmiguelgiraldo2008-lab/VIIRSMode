@@ -59,8 +59,8 @@ body {
       rgba(3, 10, 21, 0.24)
     );
   transition:
-    opacity 850ms ease,
-    transform 850ms ease;
+    opacity 1400ms ease,
+    transform 1800ms ease;
 }
 .intro-screen::before {
   position: absolute;
@@ -117,8 +117,81 @@ body {
   transform: scale(1.16);
   animation: star-drift 32s linear infinite alternate;
 }
+.intro-globe {
+  position: absolute;
+  top: 50%;
+  right: 3%;
+  z-index: 1;
+  width: min(64vw, 780px);
+  aspect-ratio: 1;
+  transform: translateY(-50%);
+  opacity: 0.88;
+  pointer-events: none;
+  transition:
+    opacity 4.2s ease,
+    transform 4.6s cubic-bezier(0.2, 0.72, 0.2, 1),
+    filter 3.8s ease;
+}
+.intro-globe.fading {
+  transform: translateY(-50%) scale(0.86);
+  opacity: 0;
+  filter: blur(6px);
+}
+.intro-globe-art {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  filter: drop-shadow(0 0 42px rgba(188, 87, 121, 0.12));
+  transform-origin: center;
+  animation: intro-globe-turn 300s linear infinite;
+}
+.intro-globe-grid,
+.intro-globe-routes,
+.intro-globe-nodes,
+.intro-globe-orbit {
+  display: none;
+}
+.intro-globe-routes path {
+  stroke-width: 1.8;
+  stroke-opacity: 0.88;
+  stroke-dasharray: 8 6;
+  animation: intro-route-flow 12s linear infinite;
+}
+.intro-globe-routes path:nth-child(even) {
+  animation-duration: 16s;
+  animation-direction: reverse;
+}
+.intro-globe-nodes circle {
+  fill: #d6ebff;
+  filter: drop-shadow(0 0 5px #7bbcff);
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: intro-node-pulse 2.8s ease-in-out infinite alternate;
+}
+.intro-globe-nodes circle:nth-child(3n) {
+  animation-delay: 0.9s;
+}
+.intro-globe-orbit {
+  stroke-dasharray: 2 7;
+  animation: intro-orbit-flow 24s linear infinite;
+}
+.intro-globe-orbit--second {
+  animation-direction: reverse;
+  animation-duration: 32s;
+}
+.intro-globe-caption {
+  position: absolute;
+  right: 14%;
+  bottom: 8%;
+  color: rgba(219, 171, 187, 0.42);
+  font-size: 8px;
+  letter-spacing: 0.2em;
+  white-space: nowrap;
+}
 .intro-frame {
   position: relative;
+  z-index: 2;
   width: min(1540px, 100%);
   height: 100%;
   margin: 0 auto;
@@ -467,6 +540,15 @@ body {
     padding: 44px 4% 12px;
     box-sizing: border-box;
   }
+  .intro-globe {
+    top: 37%;
+    right: -15%;
+    width: min(98vw, 590px);
+    opacity: 0.5;
+  }
+  .intro-globe-caption {
+    display: none;
+  }
   .intro-header {
     top: 3%;
     left: 4%;
@@ -562,6 +644,12 @@ body {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+  .intro-globe-art,
+  .intro-globe-routes path,
+  .intro-globe-orbit,
+  .intro-globe-nodes circle {
+    animation: none !important;
+  }
 }
 @keyframes intro-copy-in {
   to {
@@ -572,6 +660,32 @@ body {
 @keyframes star-drift {
   to {
     transform: translate(-10px, 8px) scale(1.16);
+  }
+}
+@keyframes intro-globe-float {
+  50% {
+    transform: translateY(-8px);
+  }
+}
+@keyframes intro-globe-turn {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes intro-route-flow {
+  to {
+    stroke-dashoffset: -130;
+  }
+}
+@keyframes intro-orbit-flow {
+  to {
+    stroke-dashoffset: -90;
+  }
+}
+@keyframes intro-node-pulse {
+  to {
+    opacity: 0.38;
+    transform: scale(0.7);
   }
 }
 @keyframes line-pulse {
