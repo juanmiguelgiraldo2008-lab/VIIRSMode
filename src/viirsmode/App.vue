@@ -35,9 +35,19 @@ const liveStatus = ref('');
 const keyDialogOpen = ref(false);
 const mapKey = ref('');
 const savingKey = ref(false);
+const mapKeyConfigured = ref(false);
+const mapKeyManaged = ref(null);
+const editingMapKey = ref(false);
+const mapKeyStatus = ref('');
+const introProgress = ref(0);
+const introReady = ref(false);
+const started = ref(false);
+const starting = ref(false);
 const LIVE_REFRESH_MS = 10 * 60 * 1000;
 const ACTIVATE_LIVE_AFTER_RESTART = 'viirsmode-live-after-key-setup';
+const KEY_SAVED_BEFORE_RESTART = 'viirsmode-key-saved';
 let liveRefreshTimer = null;
+let introTimer = null;
 
 const yearBounds = computed(() => {
   let min = Infinity;
@@ -51,6 +61,19 @@ const yearBounds = computed(() => {
 });
 
 onMounted(async () => {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    introProgress.value = 100;
+    introReady.value = true;
+  } else {
+    introTimer = setInterval(() => {
+      introProgress.value = Math.min(introProgress.value + 2, 100);
+      if (introProgress.value === 100) {
+        clearInterval(introTimer);
+        introReady.value = true;
+      }
+    }, 30);
+  }
+
   try {
     const res = await fetch('/viirsmode/hotspots.csv');
     if (!res.ok) throw new Error(`Hotspot CSV request failed (${res.status})`);
@@ -64,6 +87,22 @@ onMounted(async () => {
     hotspotError.value = error instanceof Error ? error.message : String(error);
   }
 
+  try {
+    const response = await fetch('/api/setup/status', { cache: 'no-store' });
+    if (response.ok) {
+      const status = await response.json();
+      const firmsKey = status.keys?.find((key) => key.id === 'firms');
+      mapKeyConfigured.value = Boolean(firmsKey?.set);
+      mapKeyManaged.value = firmsKey?.managed ?? null;
+    }
+  } catch {
+    // Historical mode remains available when the local key-setup endpoint is absent.
+  }
+
+  if (sessionStorage.getItem(KEY_SAVED_BEFORE_RESTART) === '1') {
+    sessionStorage.removeItem(KEY_SAVED_BEFORE_RESTART);
+    mapKeyStatus.value = 'NASA FIRMS key saved in local settings.';
+  }
   if (sessionStorage.getItem(ACTIVATE_LIVE_AFTER_RESTART) === '1') {
     sessionStorage.removeItem(ACTIVATE_LIVE_AFTER_RESTART);
     await activateLive();
@@ -72,6 +111,7 @@ onMounted(async () => {
 
 onBeforeUnmount(() => {
   if (liveRefreshTimer) clearInterval(liveRefreshTimer);
+  if (introTimer) clearInterval(introTimer);
 });
 
 // Map: every hotspot of the selected years, anywhere
@@ -126,6 +166,14 @@ function download() {
     `viirsmode_hotspots_${range.from}-${range.to}.csv`,
     hotspotsToCsv(exportRows.value),
   );
+}
+
+async function startExperience() {
+  if (starting.value || started.value) return;
+  starting.value = true;
+  await globe.value?.startIntro();
+  started.value = true;
+  starting.value = false;
 }
 
 async function fetchLiveHotspots() {
@@ -196,11 +244,14 @@ async function saveMapKey() {
         payload.error || `Could not save NASA FIRMS key (${response.status})`,
       );
     }
-    sessionStorage.setItem(ACTIVATE_LIVE_AFTER_RESTART, '1');
+    if (started.value) {
+      sessionStorage.setItem(ACTIVATE_LIVE_AFTER_RESTART, '1');
+    } else {
+      sessionStorage.setItem(KEY_SAVED_BEFORE_RESTART, '1');
+    }
     keyDialogOpen.value = false;
     mapKey.value = '';
-    liveStatus.value =
-      'Key saved securely. The app is restarting to enable LIVE…';
+    mapKeyStatus.value = 'Key saved securely. Restarting the app…';
   } catch (error) {
     liveError.value = error instanceof Error ? error.message : String(error);
   } finally {
@@ -214,37 +265,170 @@ async function saveMapKey() {
     <GlobeView
       ref="globe"
       :area="area"
-      :hotspots="liveMode ? liveHotspots : visible"
+      :hotspots="started ? (liveMode ? liveHotspots : visible) : []"
       :live="liveMode"
+      :intro="!started"
       @select="onGlobeSelect"
     />
 
-    <header class="vm-brand">
-      <h1>ViirsMode</h1>
-      <p>Burning activity calendar · harmonized MODIS + VIIRS</p>
-      <p v-if="hotspotError" class="vm-warn"
-        >Hotspot data unavailable: {{ hotspotError }}</p
-      >
-    </header>
-
-    <div class="vm-controls">
-      <section class="live-control" :class="{ active: liveMode }">
-        <button
-          type="button"
-          class="live-button"
-          :disabled="liveLoading"
-          @click="activateLive"
+    <Transition name="app-ui">
+      <header v-if="started" class="vm-brand">
+        <h1>ViirsMode</h1>
+        <p>Burning activity calendar · harmonized MODIS + VIIRS</p>
+        <p v-if="hotspotError" class="vm-warn"
+          >Hotspot data unavailable: {{ hotspotError }}</p
         >
-          <span class="live-indicator" :class="{ pulsing: liveMode }"></span>
-          {{
-            liveLoading ? 'LOADING LIVE…' : liveMode ? 'EXIT LIVE' : 'GO LIVE'
-          }}
-        </button>
-        <span v-if="liveStatus" class="live-status">{{ liveStatus }}</span>
-        <span v-if="liveError" class="live-error">{{ liveError }}</span>
-      </section>
-      <SearchBar :range="range" @found="onFound" />
-    </div>
+      </header>
+    </Transition>
+
+    <Transition name="app-ui">
+      <div v-if="started" class="vm-controls">
+        <section class="live-control" :class="{ active: liveMode }">
+          <button
+            type="button"
+            class="live-button"
+            :disabled="liveLoading"
+            @click="activateLive"
+          >
+            <span class="live-indicator" :class="{ pulsing: liveMode }"></span>
+            {{
+              liveLoading ? 'LOADING LIVE…' : liveMode ? 'EXIT LIVE' : 'GO LIVE'
+            }}
+          </button>
+          <span v-if="liveStatus" class="live-status">{{ liveStatus }}</span>
+          <span v-if="liveError" class="live-error">{{ liveError }}</span>
+        </section>
+        <SearchBar :range="range" @found="onFound" />
+      </div>
+    </Transition>
+
+    <Transition name="intro">
+      <main v-if="!started" class="intro-screen" :class="{ ready: introReady }">
+        <div class="intro-stars" aria-hidden="true"></div>
+        <div class="intro-frame">
+          <header class="intro-header">
+            <a class="intro-wordmark" href="#" @click.prevent>
+              <span class="intro-mark" aria-hidden="true">V</span>
+              <span>VIIRSMODE</span>
+            </a>
+            <span class="intro-header-note">EARTH OBSERVATION · 01</span>
+          </header>
+
+          <section class="intro-copy">
+            <p class="intro-eyebrow">A PLANETARY FIRE ATLAS</p>
+            <h1>
+              See the patterns<br />
+              behind the <span>flames.</span>
+            </h1>
+            <p class="intro-description">
+              Explore a harmonized view of active fire detections from NASA’s
+              MODIS and VIIRS satellites.
+            </p>
+          </section>
+
+          <footer class="intro-footer">
+            <div class="intro-progress">
+              <span class="intro-progress-label">INITIALIZING EARTH VIEW</span>
+              <span class="intro-progress-track">
+                <span
+                  class="intro-progress-value"
+                  :style="{ width: `${introProgress}%` }"
+                ></span>
+              </span>
+              <span class="intro-progress-percent">{{ introProgress }}%</span>
+            </div>
+            <p>NASA FIRMS DATA · MODIS + VIIRS</p>
+          </footer>
+
+          <section class="intro-launch-card">
+            <div class="intro-card-heading">
+              <span class="intro-live-mark"></span>
+              <div>
+                <p class="intro-eyebrow">OPTIONAL · FOR LIVE DETECTIONS</p>
+                <h2>Connect NASA FIRMS</h2>
+              </div>
+            </div>
+            <p class="intro-card-copy">
+              Add a free MAP_KEY to explore current global fire activity. You
+              can also start with the historical calendar.
+            </p>
+            <div
+              v-if="mapKeyConfigured && !editingMapKey"
+              class="intro-key-configured"
+            >
+              <span>NASA FIRMS key configured</span>
+              <span v-if="mapKeyManaged === 'external'"
+                >· managed externally</span
+              >
+              <button
+                v-else
+                type="button"
+                class="intro-key-edit"
+                @click="editingMapKey = true"
+              >
+                UPDATE KEY
+              </button>
+            </div>
+            <div v-else class="intro-key-row">
+              <input
+                v-model="mapKey"
+                type="password"
+                autocomplete="off"
+                spellcheck="false"
+                aria-label="NASA FIRMS MAP_KEY"
+                placeholder="Paste your NASA FIRMS MAP_KEY"
+                @keyup.enter="saveMapKey"
+              />
+              <button
+                type="button"
+                class="intro-key-save"
+                :disabled="savingKey || !mapKey.trim()"
+                @click="saveMapKey"
+              >
+                {{ savingKey ? 'SAVING…' : 'ADD KEY' }}
+              </button>
+            </div>
+            <p v-if="mapKeyStatus" class="intro-key-status" role="status">
+              {{ mapKeyStatus }}
+            </p>
+            <p v-if="liveError" class="intro-key-error" role="alert">
+              {{ liveError }}
+            </p>
+            <a
+              class="intro-key-link"
+              href="https://firms.modaps.eosdis.nasa.gov/api/map_key/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Get a free MAP_KEY from NASA <span aria-hidden="true">↗</span>
+            </a>
+            <div class="intro-card-divider"></div>
+            <button
+              type="button"
+              class="intro-start"
+              :disabled="!introReady || starting || savingKey"
+              @click="startExperience"
+            >
+              <span>{{
+                starting ? 'HARMONIZING MODIS + VIIRS…' : 'START EXPLORING'
+              }}</span>
+              <span class="intro-start-arrow" aria-hidden="true">↗</span>
+            </button>
+            <p class="intro-start-note">
+              Historical calendar · defaults to 2025
+            </p>
+          </section>
+
+          <Transition name="harmonizing">
+            <div v-if="starting" class="harmonizing-message" aria-live="polite">
+              <span class="harmonizing-line"></span>
+              <p>Harmonizing MODIS + VIIRS</p>
+              <span>PREPARING GLOBAL VIEW</span>
+            </div>
+          </Transition>
+        </div>
+      </main>
+    </Transition>
 
     <div
       v-if="keyDialogOpen"

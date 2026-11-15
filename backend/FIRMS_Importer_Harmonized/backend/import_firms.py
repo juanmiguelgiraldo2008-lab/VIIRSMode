@@ -145,7 +145,12 @@ def merge_hotspots(rows, radius_km=1.0, frp_ratio=2.0, frp_absolute=2.0):
 
 
 def harmonization_weights(groups):
-    """Return annual MODIS-reference weights and pooled epoch diagnostics."""
+    """Return one MODIS-reference weight per epoch, plus yearly validation.
+
+    Years with the same set of VIIRS satellites share one constant weight
+    (MODIS-containing groups / all groups across the epoch). Each year's
+    weighted total is then a real comparison against MODIS, not a circular match.
+    """
     years = defaultdict(lambda: dict(total=0, modis=0, sats=set()))
     for g in groups:
         year = g["date"][:4]
@@ -153,11 +158,6 @@ def harmonization_weights(groups):
         years[year]["total"] += 1
         years[year]["modis"] += "MODIS" in sensors
         years[year]["sats"].update(g.get("satellites", [g["satellite"]]))
-    weights, annual_report = {}, []
-    eras = {
-        epoch: dict(total=0, modis=0, sats=set(), years=[])
-        for epoch in ("2000-2011", "2012-2017", "2018+")
-    }
 
     def epoch_for(year):
         numeric_year = int(year)
@@ -167,49 +167,50 @@ def harmonization_weights(groups):
             return "2012-2017"
         return "2018+"
 
+    eras = {}
     for year, data in sorted(years.items()):
-        epoch = epoch_for(year)
-        viirs = sorted(s for s in data["sats"] if s not in ("Terra", "Aqua"))
-        if viirs and not data["modis"]:
-            raise ValueError(
-                f"Cannot harmonize {year}: VIIRS groups have no MODIS reference groups")
-        raw_weight = data["modis"] / data["total"] if viirs else 1.0
-        weight = round(raw_weight, 4)
-        weights[year] = weight
-        weighted_groups = data["total"] * weight
-        annual_report.append(dict(
-            year=int(year), epoch=epoch, viirs_satellites=viirs,
-            groups=data["total"], modis_groups=data["modis"], weight=weight,
-            weighted_groups=round(weighted_groups, 4),
-            difference_from_modis=round(weighted_groups - data["modis"], 4)))
-
-        era = eras[epoch]
+        era = eras.setdefault(
+            epoch_for(year), dict(total=0, modis=0, sats=set(), years=[]))
         era["total"] += data["total"]
         era["modis"] += data["modis"]
-        era["sats"].update(viirs)
+        era["sats"].update(s for s in data["sats"] if s not in ("Terra", "Aqua"))
         era["years"].append(year)
 
-    epoch_report = []
-    for epoch, data in eras.items():
-        if not data["years"]:
-            continue
-        total, modis = data["total"], data["modis"]
-        satellites = sorted(data["sats"])
-        pooled_weight = modis / total if satellites and modis else 1.0
-        weighted_total = sum(
-            data["total"] * weights[year]
-            for year, data in years.items()
-            if epoch_for(year) == epoch
-        )
-        epoch_report.append(dict(
-            epoch=epoch, viirs_satellites=satellites,
-            years=sorted(data["years"]),
-            groups=total, modis_groups=modis, weight=round(pooled_weight, 4),
-            weight_scope="pooled epoch diagnostic; applied weights are per year",
-            weighted_groups=round(weighted_total, 4),
-            difference_from_modis=round(weighted_total - modis, 4)))
-    return weights, epoch_report, annual_report
+    epoch_weights = {}
+    for epoch, era in eras.items():
+        if era["sats"] and not era["modis"]:
+            raise ValueError(
+                f"Cannot harmonize {epoch}: VIIRS groups have no MODIS reference groups")
+        epoch_weights[epoch] = (
+            round(era["modis"] / era["total"], 4) if era["sats"] else 1.0)
 
+    weights, annual_report = {}, []
+    for year, data in sorted(years.items()):
+        epoch = epoch_for(year)
+        weight = epoch_weights[epoch]
+        weights[year] = weight
+        weighted = data["total"] * weight
+        diff = weighted - data["modis"]
+        annual_report.append(dict(
+            year=int(year), epoch=epoch,
+            viirs_satellites=sorted(s for s in data["sats"] if s not in ("Terra", "Aqua")),
+            groups=data["total"], modis_groups=data["modis"], weight=weight,
+            weighted_groups=round(weighted, 4),
+            difference_from_modis=round(diff, 4),
+            error_pct=round(100 * diff / data["modis"], 1) if data["modis"] else None))
+
+    epoch_report = []
+    for epoch, era in eras.items():
+        weighted_total = sum(
+            years[y]["total"] * epoch_weights[epoch] for y in era["years"])
+        epoch_report.append(dict(
+            epoch=epoch, viirs_satellites=sorted(era["sats"]),
+            years=sorted(era["years"]), groups=era["total"],
+            modis_groups=era["modis"], weight=epoch_weights[epoch],
+            weight_scope="one constant weight per epoch",
+            weighted_groups=round(weighted_total, 4),
+            difference_from_modis=round(weighted_total - era["modis"], 4)))
+    return weights, epoch_report, annual_report
 
 def build_hotspots(input_dir=BACKEND / "data", *, merge=True, radius_km=1.0,
                    frp_ratio=2.0, frp_absolute=2.0):
@@ -242,18 +243,15 @@ def build_hotspots(input_dir=BACKEND / "data", *, merge=True, radius_km=1.0,
                   counts_by_year=[dict(year=int(y), before=before[y], after=after[y])
                                   for y in sorted(before)],
                   harmonization_weight_method=(
-                      "per year: MODIS-containing groups / all groups; "
-                      "pre-VIIRS years use 1.0"),
+                      "per epoch: MODIS-containing groups / all groups, pooled over "
+                      "the epoch; pre-VIIRS years use 1.0"),
                   source_rows=report["source_rows"],
                   excluded_rows=report["excluded_rows"],
                   type_filter=report["type_filter"])
 
     report["harmonization"] = harmonization
     report["yearly_harmonization"] = yearly_harmonization
-    csv_paths = dict.fromkeys((
-        PROJECT_ROOT / "public" / "viirsmode" / "hotspots.csv",
-        BACKEND.parent / "public" / "viirsmode" / "hotspots.csv",
-    ))
+    csv_paths = [PROJECT_ROOT / "public" / "viirsmode" / "hotspots.csv"]
     for csv_path in csv_paths:
         csv_path.parent.mkdir(parents=True, exist_ok=True)
     json_path = BACKEND / "hotspots.json"

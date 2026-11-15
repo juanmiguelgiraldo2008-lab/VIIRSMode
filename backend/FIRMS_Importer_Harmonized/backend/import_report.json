@@ -994,7 +994,7 @@
       "after": 9086
     }
   ],
-  "harmonization_weight_method": "per year: MODIS-containing groups / all groups; pre-VIIRS years use 1.0",
+  "harmonization_weight_method": "per epoch: MODIS-containing groups / all groups, pooled over the epoch; pre-VIIRS years use 1.0",
   "harmonization": [
     {
       "epoch": "2000-2011",
@@ -1016,7 +1016,7 @@
       "groups": 32102,
       "modis_groups": 32102,
       "weight": 1.0,
-      "weight_scope": "pooled epoch diagnostic; applied weights are per year",
+      "weight_scope": "one constant weight per epoch",
       "weighted_groups": 32102.0,
       "difference_from_modis": 0.0
     },
@@ -1036,9 +1036,9 @@
       "groups": 39588,
       "modis_groups": 18122,
       "weight": 0.4578,
-      "weight_scope": "pooled epoch diagnostic; applied weights are per year",
-      "weighted_groups": 18122.115,
-      "difference_from_modis": 0.115
+      "weight_scope": "one constant weight per epoch",
+      "weighted_groups": 18123.3864,
+      "difference_from_modis": 1.3864
     },
     {
       "epoch": "2018+",
@@ -1059,9 +1059,9 @@
       "groups": 37823,
       "modis_groups": 13193,
       "weight": 0.3488,
-      "weight_scope": "pooled epoch diagnostic; applied weights are per year",
-      "weighted_groups": 13192.6455,
-      "difference_from_modis": -0.3545
+      "weight_scope": "one constant weight per epoch",
+      "weighted_groups": 13192.6624,
+      "difference_from_modis": -0.3376
     }
   ],
   "yearly_harmonization": [
@@ -1073,7 +1073,8 @@
       "modis_groups": 3,
       "weight": 1.0,
       "weighted_groups": 3.0,
-      "difference_from_modis": 0.0
+      "difference_from_modis": 0.0,
+      "error_pct": 0.0
     },
     {
       "year": 2001,
@@ -1083,7 +1084,8 @@
       "modis_groups": 1390,
       "weight": 1.0,
       "weighted_groups": 1390.0,
-      "difference_from_modis": 0.0
+      "difference_from_modis": 0.0,
+      "error_pct": 0.0
     },
     {
       "year": 2002,
@@ -1093,7 +1095,8 @@
       "modis_groups": 2277,
       "weight": 1.0,
       "weighted_groups": 2277.0,
-      "difference_from_modis": 0.0
+      "difference_from_modis": 0.0,
+      "error_pct": 0.0
     },
     {
       "year": 2003,
@@ -1103,7 +1106,8 @@
       "modis_groups": 5042,
       "weight": 1.0,
       "weighted_groups": 5042.0,
-      "difference_from_modis": 0.0
+      "difference_from_modis": 0.0,
+      "error_pct": 0.0
     },
     {
       "year": 2004,
@@ -1113,7 +1117,8 @@
       "modis_groups": 2589,
       "weight": 1.0,
       "weighted_groups": 2589.0,
-      "difference_from_modis": 0.0
+      "difference_from_modis": 0.0,
+      "error_pct": 0.0
     },
     {
       "year": 2005,
@@ -1123,7 +1128,8 @@
       "modis_groups": 7511,
       "weight": 1.0,
       "weighted_groups": 7511.0,
-      "difference_from_modis": 0.0
+      "difference_from_modis": 0.0,
+      "error_pct": 0.0
     },
     {
       "year": 2006,
@@ -1133,7 +1139,8 @@
       "modis_groups": 2137,
       "weight": 1.0,
       "weighted_groups": 2137.0,
-      "difference_from_modis": 0.0
+      "difference_from_modis": 0.0,
+      "error_pct": 0.0
     },
     {
       "year": 2007,
@@ -1143,7 +1150,8 @@
       "modis_groups": 1376,
       "weight": 1.0,
       "weighted_groups": 1376.0,
-      "difference_from_modis": 0.0
+      "difference_from_modis": 0.0,
+      "error_pct": 0.0
     },
     {
       "year": 2008,
@@ -1153,7 +1161,8 @@
       "modis_groups": 899,
       "weight": 1.0,
       "weighted_groups": 899.0,
-      "difference_from_modis": 0.0
+      "difference_from_modis": 0.0,
+      "error_pct": 0.0
     },
     {
       "year": 2009,
@@ -1163,7 +1172,8 @@
       "modis_groups": 2911,
       "weight": 1.0,
       "weighted_groups": 2911.0,
-      "difference_from_modis": 0.0
+      "difference_from_modis": 0.0,
+      "error_pct": 0.0
     },
     {
       "year": 2010,
@@ -1173,7 +1183,8 @@
       "modis_groups": 3430,
       "weight": 1.0,
       "weighted_groups": 3430.0,
-      "difference_from_modis": 0.0
+      "difference_from_modis": 0.0,
+      "error_pct": 0.0
     },
     {
       "year": 2011,
@@ -1183,7 +1194,8 @@
       "modis_groups": 2537,
       "weight": 1.0,
       "weighted_groups": 2537.0,
-      "difference_from_modis": 0.0
+      "difference_from_modis": 0.0,
+      "error_pct": 0.0
     },
     {
       "year": 2012,
@@ -1193,9 +1205,10 @@
       ],
       "groups": 6616,
       "modis_groups": 2938,
-      "weight": 0.4441,
-      "weighted_groups": 2938.1656,
-      "difference_from_modis": 0.1656
+      "weight": 0.4578,
+      "weighted_groups": 3028.8048,
+      "difference_from_modis": 90.8048,
+      "error_pct": 3.1
     },
     {
       "year": 2013,
@@ -1205,9 +1218,10 @@
       ],
       "groups": 7782,
       "modis_groups": 3613,
-      "weight": 0.4643,
-      "weighted_groups": 3613.1826,
-      "difference_from_modis": 0.1826
+      "weight": 0.4578,
+      "weighted_groups": 3562.5996,
+      "difference_from_modis": -50.4004,
+      "error_pct": -1.4
     },
     {
       "year": 2014,
@@ -1217,9 +1231,10 @@
       ],
       "groups": 1568,
       "modis_groups": 533,
-      "weight": 0.3399,
-      "weighted_groups": 532.9632,
-      "difference_from_modis": -0.0368
+      "weight": 0.4578,
+      "weighted_groups": 717.8304,
+      "difference_from_modis": 184.8304,
+      "error_pct": 34.7
     },
     {
       "year": 2015,
@@ -1229,9 +1244,10 @@
       ],
       "groups": 4331,
       "modis_groups": 1783,
-      "weight": 0.4117,
-      "weighted_groups": 1783.0727,
-      "difference_from_modis": 0.0727
+      "weight": 0.4578,
+      "weighted_groups": 1982.7318,
+      "difference_from_modis": 199.7318,
+      "error_pct": 11.2
     },
     {
       "year": 2016,
@@ -1241,9 +1257,10 @@
       ],
       "groups": 7742,
       "modis_groups": 3726,
-      "weight": 0.4813,
-      "weighted_groups": 3726.2246,
-      "difference_from_modis": 0.2246
+      "weight": 0.4578,
+      "weighted_groups": 3544.2876,
+      "difference_from_modis": -181.7124,
+      "error_pct": -4.9
     },
     {
       "year": 2017,
@@ -1253,9 +1270,10 @@
       ],
       "groups": 11549,
       "modis_groups": 5529,
-      "weight": 0.4787,
-      "weighted_groups": 5528.5063,
-      "difference_from_modis": -0.4937
+      "weight": 0.4578,
+      "weighted_groups": 5287.1322,
+      "difference_from_modis": -241.8678,
+      "error_pct": -4.4
     },
     {
       "year": 2018,
@@ -1266,9 +1284,10 @@
       ],
       "groups": 3353,
       "modis_groups": 1063,
-      "weight": 0.317,
-      "weighted_groups": 1062.901,
-      "difference_from_modis": -0.099
+      "weight": 0.3488,
+      "weighted_groups": 1169.5264,
+      "difference_from_modis": 106.5264,
+      "error_pct": 10.0
     },
     {
       "year": 2019,
@@ -1279,9 +1298,10 @@
       ],
       "groups": 3891,
       "modis_groups": 1083,
-      "weight": 0.2783,
-      "weighted_groups": 1082.8653,
-      "difference_from_modis": -0.1347
+      "weight": 0.3488,
+      "weighted_groups": 1357.1808,
+      "difference_from_modis": 274.1808,
+      "error_pct": 25.3
     },
     {
       "year": 2020,
@@ -1292,9 +1312,10 @@
       ],
       "groups": 3542,
       "modis_groups": 1134,
-      "weight": 0.3202,
-      "weighted_groups": 1134.1484,
-      "difference_from_modis": 0.1484
+      "weight": 0.3488,
+      "weighted_groups": 1235.4496,
+      "difference_from_modis": 101.4496,
+      "error_pct": 8.9
     },
     {
       "year": 2021,
@@ -1305,9 +1326,10 @@
       ],
       "groups": 2959,
       "modis_groups": 841,
-      "weight": 0.2842,
-      "weighted_groups": 840.9478,
-      "difference_from_modis": -0.0522
+      "weight": 0.3488,
+      "weighted_groups": 1032.0992,
+      "difference_from_modis": 191.0992,
+      "error_pct": 22.7
     },
     {
       "year": 2022,
@@ -1318,9 +1340,10 @@
       ],
       "groups": 5093,
       "modis_groups": 1898,
-      "weight": 0.3727,
-      "weighted_groups": 1898.1611,
-      "difference_from_modis": 0.1611
+      "weight": 0.3488,
+      "weighted_groups": 1776.4384,
+      "difference_from_modis": -121.5616,
+      "error_pct": -6.4
     },
     {
       "year": 2023,
@@ -1331,9 +1354,10 @@
       ],
       "groups": 3010,
       "modis_groups": 878,
-      "weight": 0.2917,
-      "weighted_groups": 878.017,
-      "difference_from_modis": 0.017
+      "weight": 0.3488,
+      "weighted_groups": 1049.888,
+      "difference_from_modis": 171.888,
+      "error_pct": 19.6
     },
     {
       "year": 2024,
@@ -1344,9 +1368,10 @@
       ],
       "groups": 6889,
       "modis_groups": 2408,
-      "weight": 0.3495,
-      "weighted_groups": 2407.7055,
-      "difference_from_modis": -0.2945
+      "weight": 0.3488,
+      "weighted_groups": 2402.8832,
+      "difference_from_modis": -5.1168,
+      "error_pct": -0.2
     },
     {
       "year": 2025,
@@ -1357,9 +1382,10 @@
       ],
       "groups": 9086,
       "modis_groups": 3888,
-      "weight": 0.4279,
-      "weighted_groups": 3887.8994,
-      "difference_from_modis": -0.1006
+      "weight": 0.3488,
+      "weighted_groups": 3169.1968,
+      "difference_from_modis": -718.8032,
+      "error_pct": -18.5
     }
   ]
 }

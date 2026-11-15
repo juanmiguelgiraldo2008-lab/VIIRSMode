@@ -7,21 +7,29 @@ const props = defineProps({
   area: { type: Object, required: true },
   hotspots: { type: Array, default: () => [] },
   live: { type: Boolean, default: false },
+  intro: { type: Boolean, default: false },
 });
 const emit = defineEmits(['select']);
 
 const MAX_POINTS = 6000;
 const MAX_HOTSPOT_VIEW_HEIGHT = 8000000;
+const INTRO_ROTATION_RATE = (Math.PI * 2) / (5 * 60);
 const container = ref(null);
 const shown = ref(0);
 let viewer = null;
 let handler = null;
 let points = null;
 let onCameraMoveEnd = null;
+let onIntroFrame = null;
+let lastIntroFrame = 0;
 
 function drawHotspots() {
   if (!viewer || !points) return;
   points.removeAll();
+  if (props.intro) {
+    shown.value = 0;
+    return;
+  }
   const cameraHeight = viewer.camera.positionCartographic.height;
   if (!props.live && cameraHeight > MAX_HOTSPOT_VIEW_HEIGHT) {
     shown.value = 0;
@@ -80,7 +88,23 @@ function flyToWorld() {
   });
 }
 
-defineExpose({ flyToArea, flyToWorld });
+function startIntro() {
+  if (!viewer) return Promise.resolve();
+  if (onIntroFrame) {
+    viewer.scene.preUpdate.removeEventListener(onIntroFrame);
+    onIntroFrame = null;
+  }
+  return new Promise((resolve) => {
+    viewer.camera.flyTo({
+      destination: Cesium.Cartesian3.fromDegrees(-18, 8, 8200000),
+      duration: 2.8,
+      complete: resolve,
+      cancel: resolve,
+    });
+  });
+}
+
+defineExpose({ flyToArea, flyToWorld, startIntro });
 
 onMounted(() => {
   viewer = new Cesium.Viewer(container.value, {
@@ -110,12 +134,26 @@ onMounted(() => {
 
   viewer.camera.setView({
     destination: Cesium.Cartesian3.fromDegrees(
-      props.area.lon,
-      props.area.lat,
-      1800000,
+      props.intro ? -28 : props.area.lon,
+      props.intro ? 20 : props.area.lat,
+      props.intro ? 16000000 : 1800000,
     ),
   });
   drawHotspots();
+
+  if (props.intro) {
+    lastIntroFrame = performance.now();
+    onIntroFrame = () => {
+      const now = performance.now();
+      const elapsedSeconds = Math.min((now - lastIntroFrame) / 1000, 0.05);
+      lastIntroFrame = now;
+      viewer.camera.rotate(
+        Cesium.Cartesian3.UNIT_Z,
+        -INTRO_ROTATION_RATE * elapsedSeconds,
+      );
+    };
+    viewer.scene.preUpdate.addEventListener(onIntroFrame);
+  }
 
   onCameraMoveEnd = () => drawHotspots();
   viewer.camera.moveEnd.addEventListener(onCameraMoveEnd);
@@ -129,12 +167,15 @@ onMounted(() => {
   }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
 });
 
-watch(() => [props.hotspots, props.live], drawHotspots);
+watch(() => [props.hotspots, props.live, props.intro], drawHotspots);
 
 onBeforeUnmount(() => {
   handler?.destroy();
   if (onCameraMoveEnd) {
     viewer?.camera.moveEnd.removeEventListener(onCameraMoveEnd);
+  }
+  if (onIntroFrame) {
+    viewer?.scene.preUpdate.removeEventListener(onIntroFrame);
   }
   viewer?.destroy();
 });
@@ -143,7 +184,7 @@ onBeforeUnmount(() => {
 <template>
   <div class="globe-wrap">
     <div ref="container" class="globe"></div>
-    <div class="globe-legend">
+    <div v-if="!intro" class="globe-legend">
       <span><i class="dot modis"></i> MODIS</span>
       <span><i class="dot viirs"></i> VIIRS</span>
       <span class="globe-count">
