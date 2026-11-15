@@ -36,7 +36,8 @@ onMounted(async () => {
     const res = await fetch('/viirsmode/hotspots.csv');
     if (!res.ok) throw new Error(`Hotspot CSV request failed (${res.status})`);
     const parsed = parseHotspotsCsv(await res.text());
-    if (!parsed.length) throw new Error('Hotspot CSV contains no valid detections');
+    if (!parsed.length)
+      throw new Error('Hotspot CSV contains no valid detections');
     hotspots.value = parsed;
     range.from = yearBounds.value.max;
     range.to = yearBounds.value.max;
@@ -46,10 +47,17 @@ onMounted(async () => {
 });
 
 // Map: every hotspot of the selected years, anywhere
-const visible = computed(() => filterByYears(hotspots.value, range.from, range.to));
+const visible = computed(() =>
+  filterByYears(hotspots.value, range.from, range.to),
+);
 // Calendar: the selected area across the full history
 const areaAllYears = computed(() =>
-  filterHotspots(hotspots.value, area, yearBounds.value.min, yearBounds.value.max),
+  filterHotspots(
+    hotspots.value,
+    area,
+    yearBounds.value.min,
+    yearBounds.value.max,
+  ),
 );
 const months = computed(() =>
   monthlyCounts(areaAllYears.value, yearBounds.value.min, yearBounds.value.max),
@@ -89,12 +97,19 @@ function download() {
 
 <template>
   <div class="vm-root">
-    <GlobeView ref="globe" :area="area" :hotspots="visible" @select="onGlobeSelect" />
+    <GlobeView
+      ref="globe"
+      :area="area"
+      :hotspots="visible"
+      @select="onGlobeSelect"
+    />
 
     <header class="vm-brand">
       <h1>ViirsMode</h1>
       <p>Burning activity calendar · harmonized MODIS + VIIRS</p>
-      <p v-if="hotspotError" class="vm-warn">Hotspot data unavailable: {{ hotspotError }}</p>
+      <p v-if="hotspotError" class="vm-warn"
+        >Hotspot data unavailable: {{ hotspotError }}</p
+      >
     </header>
 
     <SearchBar :area="area" :range="range" @found="onFound" />

@@ -79,8 +79,6 @@ export function filterByYears(hotspots, fromYear, toYear) {
   });
 }
 
-
-
 export function filterHotspots(hotspots, area, fromYear, toYear) {
   const b = areaBbox(area);
   return hotspots.filter((h) => {
@@ -105,7 +103,11 @@ export function monthlyCounts(hotspots, fromYear, toYear) {
   const months = [];
   for (let year = fromYear; year <= toYear; year++) {
     for (let month = 1; month <= 12; month++) {
-      months.push({ year, month, count: Math.round(map.get(`${year}-${month}`) || 0) });
+      months.push({
+        year,
+        month,
+        count: Math.round(map.get(`${year}-${month}`) || 0),
+      });
     }
   }
   return months;
