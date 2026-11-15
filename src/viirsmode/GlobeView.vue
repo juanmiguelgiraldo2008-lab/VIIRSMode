@@ -6,6 +6,7 @@ import { hotspotsInView } from './hotspots.js';
 const props = defineProps({
   area: { type: Object, required: true },
   hotspots: { type: Array, default: () => [] },
+  live: { type: Boolean, default: false },
 });
 const emit = defineEmits(['select']);
 
@@ -22,7 +23,7 @@ function drawHotspots() {
   if (!viewer || !points) return;
   points.removeAll();
   const cameraHeight = viewer.camera.positionCartographic.height;
-  if (cameraHeight > MAX_HOTSPOT_VIEW_HEIGHT) {
+  if (!props.live && cameraHeight > MAX_HOTSPOT_VIEW_HEIGHT) {
     shown.value = 0;
     return;
   }
@@ -72,7 +73,14 @@ function flyToArea() {
   });
 }
 
-defineExpose({ flyToArea });
+function flyToWorld() {
+  if (!viewer) return;
+  viewer.camera.flyTo({
+    destination: Cesium.Cartesian3.fromDegrees(0, 0, 10000000),
+  });
+}
+
+defineExpose({ flyToArea, flyToWorld });
 
 onMounted(() => {
   viewer = new Cesium.Viewer(container.value, {
@@ -121,7 +129,7 @@ onMounted(() => {
   }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
 });
 
-watch(() => props.hotspots, drawHotspots);
+watch(() => [props.hotspots, props.live], drawHotspots);
 
 onBeforeUnmount(() => {
   handler?.destroy();
