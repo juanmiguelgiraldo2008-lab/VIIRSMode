@@ -102,13 +102,18 @@ const TABS = [
           activity look higher only because better sensors arrived.
         </p>
         <p>
-          ViirsMode first groups detections from the same UTC day that fall
-          within 1 km and have similar fire power, so one fire seen by several
-          satellites counts once. Then, for each period with the same set of
-          VIIRS satellites, it scales the counts so their total matches what
-          MODIS alone recorded in that period. The result is one continuous
-          series in MODIS-equivalent units from 2000 to today. It is an
-          approximation, not a sensor calibration.
+          ViirsMode first groups detections from the same UTC day that fall within
+          1 km and have similar fire power, so one fire seen by several satellites
+          counts once. Then, for each period with the same set of VIIRS satellites,
+          it applies one constant weight so the period's total matches what MODIS
+          alone recorded. The result is one continuous series in MODIS-equivalent
+          units from 2000 onward. In our Portugal data, the harmonized yearly
+          counts differ from MODIS by about 12% on average.
+        </p>
+        <p>
+          This is an approximation, not a sensor calibration: it assumes a stable
+          ratio within each period, uses only the S-NPP and NOAA-20 satellites,
+          and the weights are validated on the same years used to compute them.
         </p>
       </div>
     </template>
