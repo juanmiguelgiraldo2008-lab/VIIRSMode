@@ -23,6 +23,7 @@ MODIS has observed fires since 2000, but VIIRS sees smaller fires at finer resol
 - **Time-lapse** that plays the record month by month while the calendar fills in.
 - **Burning-activity calendar** (year by month) built from the harmonized series, with a color-blind-friendly color ramp.
 - **Fire activity panel:** compares an area's activity against the historical median of the same months, with a per-year chart that marks when S-NPP (2012) and NOAA-20 (2018) join.
+- **Go Live:** Live shows the last 24 h of NOAA-20 VIIRS detections through a serverless proxy that keeps the FIRMS key private; low-confidence detections are filtered and up to 15,000 points are shown.
 - **CSV download** of the detections for the selected area and years, including the harmonization weights.
 - **Why** tab explaining fire regimes and why the sensors must be harmonized.
 
