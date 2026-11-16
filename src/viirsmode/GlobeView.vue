@@ -1,7 +1,7 @@
 <script setup>
-import { onMounted, onBeforeUnmount, ref, watch } from 'vue';
-import * as Cesium from 'cesium';
-import { hotspotsInView } from './hotspots.js';
+import { onMounted, onBeforeUnmount, ref, watch } from "vue";
+import * as Cesium from "cesium";
+import { hotspotsInView } from "./hotspots.js";
 
 const props = defineProps({
   area: { type: Object, required: true },
@@ -10,7 +10,7 @@ const props = defineProps({
   intro: { type: Boolean, default: false },
   introTransitioning: { type: Boolean, default: false },
 });
-const emit = defineEmits(['select']);
+const emit = defineEmits(["select"]);
 
 const MAX_POINTS = 6000;
 const MAX_HOTSPOT_VIEW_HEIGHT = 8000000;
@@ -60,7 +60,7 @@ function drawHotspots() {
       id: h,
       position: Cesium.Cartesian3.fromDegrees(h.lon, h.lat, 100),
       pixelSize: 3,
-      color: h.sensor === 'MODIS' ? Cesium.Color.YELLOW : Cesium.Color.RED,
+      color: h.sensor === "MODIS" ? Cesium.Color.YELLOW : Cesium.Color.RED,
       outlineColor: Cesium.Color.BLACK.withAlpha(0.6),
       outlineWidth: 0,
     });
@@ -115,9 +115,9 @@ onMounted(() => {
   viewer = new Cesium.Viewer(container.value, {
     baseLayer: new Cesium.ImageryLayer(
       new Cesium.UrlTemplateImageryProvider({
-        url: 'https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+        url: "https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
         maximumLevel: 18,
-        credit: 'Esri World Imagery',
+        credit: "Esri World Imagery",
       }),
     ),
     baseLayerPicker: false,
@@ -168,7 +168,7 @@ onMounted(() => {
     const picked = viewer.scene.pick(click.position);
     const hotspot = picked?.id?.date ? picked.id : null;
     if (!hotspot) return;
-    emit('select', { lat: hotspot.lat, lon: hotspot.lon, hotspot });
+    emit("select", { lat: hotspot.lat, lon: hotspot.lon, hotspot });
   }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
 });
 
@@ -200,7 +200,7 @@ onBeforeUnmount(() => {
       <span><i class="dot modis"></i> MODIS</span>
       <span><i class="dot viirs"></i> VIIRS</span>
       <span class="globe-count">
-        {{ shown ? `${shown} hotspots` : 'Zoom in to view hotspots' }}
+        {{ shown ? `${shown} hotspots` : "Zoom in to view hotspots" }}
       </span>
     </div>
   </div>

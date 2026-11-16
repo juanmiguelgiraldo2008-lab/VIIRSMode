@@ -1,11 +1,11 @@
 <script setup>
-import { computed, onBeforeUnmount, ref, watch } from 'vue';
+import { computed, onBeforeUnmount, ref, watch } from "vue";
 
 const props = defineProps({
   monthKeys: { type: Array, default: () => [] },
-  currentMonth: { type: String, default: '' },
+  currentMonth: { type: String, default: "" },
 });
-const emit = defineEmits(['select', 'start', 'stop']);
+const emit = defineEmits(["select", "start", "stop"]);
 
 const speed = ref(1);
 const playing = ref(false);
@@ -17,12 +17,12 @@ const currentIndex = computed(() => {
   return index < 0 ? 0 : index;
 });
 const monthLabel = computed(() => {
-  if (!props.currentMonth) return 'No data';
+  if (!props.currentMonth) return "No data";
   const date = new Date(`${props.currentMonth}-01T00:00:00Z`);
-  return new Intl.DateTimeFormat('en-US', {
-    month: 'short',
-    year: 'numeric',
-    timeZone: 'UTC',
+  return new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    year: "numeric",
+    timeZone: "UTC",
   }).format(date);
 });
 const noteHighlighted = computed(
@@ -37,7 +37,7 @@ function clearTimer() {
 function stopPlayback() {
   clearTimer();
   playing.value = false;
-  emit('stop');
+  emit("stop");
 }
 
 function advanceMonth() {
@@ -47,7 +47,7 @@ function advanceMonth() {
     return;
   }
   playbackIndex = nextIndex;
-  emit('select', props.monthKeys[nextIndex]);
+  emit("select", props.monthKeys[nextIndex]);
   if (nextIndex === props.monthKeys.length - 1) stopPlayback();
 }
 
@@ -56,10 +56,10 @@ function startPlayback() {
   playbackIndex = currentIndex.value;
   if (playbackIndex >= props.monthKeys.length - 1) {
     playbackIndex = 0;
-    emit('select', props.monthKeys[playbackIndex]);
+    emit("select", props.monthKeys[playbackIndex]);
   }
   playing.value = true;
-  emit('start');
+  emit("start");
   clearTimer();
   timer = setInterval(advanceMonth, 400 / speed.value);
 }
@@ -75,7 +75,7 @@ function togglePlayback() {
 function selectMonth(event) {
   playbackIndex = Number(event.target.value);
   const key = props.monthKeys[playbackIndex];
-  if (key) emit('select', key);
+  if (key) emit("select", key);
 }
 
 watch(speed, () => {
@@ -97,7 +97,7 @@ onBeforeUnmount(clearTimer);
         :aria-label="playing ? 'Pause time-lapse' : 'Play time-lapse'"
         @click="togglePlayback"
       >
-        <span aria-hidden="true">{{ playing ? 'Ⅱ' : '▶' }}</span>
+        <span aria-hidden="true">{{ playing ? "Ⅱ" : "▶" }}</span>
       </button>
       <input
         class="timeline-slider"

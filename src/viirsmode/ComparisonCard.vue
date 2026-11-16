@@ -1,21 +1,21 @@
 <script setup>
-import { computed, ref, watch } from 'vue';
-import { compareMonth } from './hotspots.js';
+import { computed, ref, watch } from "vue";
+import { compareMonth } from "./hotspots.js";
 
 const props = defineProps({ months: { type: Array, required: true } });
 const MONTH_NAMES = [
-  'Jan',
-  'Feb',
-  'Mar',
-  'Apr',
-  'May',
-  'Jun',
-  'Jul',
-  'Aug',
-  'Sep',
-  'Oct',
-  'Nov',
-  'Dec',
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
 ];
 
 const refYear = ref(null);
@@ -42,10 +42,10 @@ const result = computed(() =>
 
 const verdict = computed(() => {
   const r = result.value.ratio;
-  if (r === null) return 'No historical baseline';
-  if (r > 1.25) return 'Above normal';
-  if (r < 0.75) return 'Below normal';
-  return 'Near normal';
+  if (r === null) return "No historical baseline";
+  if (r > 1.25) return "Above normal";
+  if (r < 0.75) return "Below normal";
+  return "Near normal";
 });
 const barMax = computed(() =>
   Math.max(1, result.value.count, result.value.median),
@@ -57,9 +57,9 @@ const barMax = computed(() =>
     <h3>Compared with the historical median</h3>
     <div class="cmp-pick">
       <select v-model.number="refMonth">
-        <option v-for="m in 12" :key="m" :value="m">{{
-          MONTH_NAMES[m - 1]
-        }}</option>
+        <option v-for="m in 12" :key="m" :value="m">
+          {{ MONTH_NAMES[m - 1] }}
+        </option>
       </select>
       <select v-model.number="refYear">
         <option v-for="y in years" :key="y" :value="y">{{ y }}</option>

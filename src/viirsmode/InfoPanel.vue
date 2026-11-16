@@ -1,8 +1,8 @@
 <script setup>
-import { ref } from 'vue';
-import CalendarHeatmap from './CalendarHeatmap.vue';
-import ComparisonCard from './ComparisonCard.vue';
-import FireActivityCard from './FireActivityCard.vue';
+import { ref } from "vue";
+import CalendarHeatmap from "./CalendarHeatmap.vue";
+import ComparisonCard from "./ComparisonCard.vue";
+import FireActivityCard from "./FireActivityCard.vue";
 
 defineProps({
   selection: Object,
@@ -10,17 +10,17 @@ defineProps({
   count: Number,
   harmonizedCount: Number,
   range: Object,
-  currentMonth: { type: String, default: '' },
+  currentMonth: { type: String, default: "" },
   area: { type: Object, required: true },
 });
-defineEmits(['close', 'download', 'select-year']);
+defineEmits(["close", "download", "select-year"]);
 
-const tab = ref('overview');
+const tab = ref("overview");
 const TABS = [
-  ['overview', 'Overview'],
-  ['calendar', 'Calendar'],
-  ['why', 'Why'],
-  ['news', 'News'],
+  ["overview", "Overview"],
+  ["calendar", "Calendar"],
+  ["why", "Why"],
+  ["news", "News"],
 ];
 </script>
 
@@ -28,9 +28,9 @@ const TABS = [
   <aside class="info">
     <div class="info-head">
       <h2>Fire information</h2>
-      <button class="info-close" type="button" @click="$emit('close')"
-        >×</button
-      >
+      <button class="info-close" type="button" @click="$emit('close')">
+        ×
+      </button>
     </div>
 
     <div class="info-tabs">
@@ -40,8 +40,9 @@ const TABS = [
         type="button"
         :class="{ on: tab === key }"
         @click="tab = key"
-        >{{ label }}</button
       >
+        {{ label }}
+      </button>
     </div>
 
     <template v-if="tab === 'overview'">
@@ -49,20 +50,20 @@ const TABS = [
         <h3>Location</h3>
         <p v-if="selection?.name">{{ selection.name }}</p>
         <p>{{ selection?.lat.toFixed(3) }}, {{ selection?.lon.toFixed(3) }}</p>
-        <p
-          >{{ count }} hotspot groups · {{ harmonizedCount }} MODIS-equivalent
-          groups, {{ range.from }}–{{ range.to }}</p
-        >
+        <p>
+          {{ count }} hotspot groups · {{ harmonizedCount }} MODIS-equivalent
+          groups, {{ range.from }}–{{ range.to }}
+        </p>
       </div>
 
       <div v-if="selection?.hotspot" class="info-block">
         <h3>Selected hotspot</h3>
         <p>Date: {{ selection.hotspot.date }}</p>
-        <p
-          >Sensor: {{ selection.hotspot.sensor }} ({{
+        <p>
+          Sensor: {{ selection.hotspot.sensor }} ({{
             selection.hotspot.satellite
-          }})</p
-        >
+          }})
+        </p>
         <p>Fire radiative power: {{ selection.hotspot.frp }} MW</p>
       </div>
 

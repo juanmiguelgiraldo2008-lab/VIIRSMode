@@ -3,8 +3,8 @@ export function parseHotspotsCsv(text) {
   const lines = text.trim().split(/\r?\n/);
   if (!lines[0]) return [];
   const header = lines[0]
-    .replace(/^\uFEFF/, '')
-    .split(',')
+    .replace(/^\uFEFF/, "")
+    .split(",")
     .map((h) => h.trim());
   const idx = Object.fromEntries(header.map((h, i) => [h, i]));
   if (
@@ -16,17 +16,17 @@ export function parseHotspotsCsv(text) {
   }
   const out = [];
   for (let i = 1; i < lines.length; i++) {
-    const p = lines[i].split(',').map((value) => value.trim());
+    const p = lines[i].split(",").map((value) => value.trim());
     if (
       p.length !== header.length ||
-      !/^\d{4}-\d{2}-\d{2}$/.test(p[idx.date] ?? '')
+      !/^\d{4}-\d{2}-\d{2}$/.test(p[idx.date] ?? "")
     ) {
       continue;
     }
     if (
-      p[idx.lat] === '' ||
-      p[idx.lon] === '' ||
-      (idx.frp !== undefined && p[idx.frp] === '')
+      p[idx.lat] === "" ||
+      p[idx.lon] === "" ||
+      (idx.frp !== undefined && p[idx.frp] === "")
     ) {
       continue;
     }
@@ -100,7 +100,7 @@ export function buildMonthlyIndex(hotspots) {
   const index = new Map();
   for (let monthIndex = firstMonth; monthIndex <= lastMonth; monthIndex++) {
     const year = Math.floor(monthIndex / 12);
-    const month = String((monthIndex % 12) + 1).padStart(2, '0');
+    const month = String((monthIndex % 12) + 1).padStart(2, "0");
     const key = `${year}-${month}`;
     index.set(key, grouped.get(key) ?? []);
   }
@@ -243,18 +243,18 @@ export function compareMonth(months, year, month) {
 }
 
 export function hotspotsToCsv(hotspots) {
-  const header = 'lat,lon,date,sensor,satellite,frp,weight';
+  const header = "lat,lon,date,sensor,satellite,frp,weight";
   const rows = hotspots.map(
     (h) =>
-      `${h.lat},${h.lon},${h.date},${h.sensor ?? ''},${h.satellite ?? ''},${h.frp ?? ''},${h.weight ?? ''}`,
+      `${h.lat},${h.lon},${h.date},${h.sensor ?? ""},${h.satellite ?? ""},${h.frp ?? ""},${h.weight ?? ""}`,
   );
-  return [header, ...rows].join('\n');
+  return [header, ...rows].join("\n");
 }
 
 export function downloadText(filename, text) {
-  const blob = new Blob([text], { type: 'text/csv;charset=utf-8' });
+  const blob = new Blob([text], { type: "text/csv;charset=utf-8" });
   const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
+  const a = document.createElement("a");
   a.href = url;
   a.download = filename;
   a.click();

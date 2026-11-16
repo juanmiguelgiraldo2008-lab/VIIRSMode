@@ -6,12 +6,12 @@ import {
   reactive,
   shallowRef,
   ref,
-} from 'vue';
-import GlobeView from './GlobeView.vue';
-import IntroGlobe from './IntroGlobe.vue';
-import SearchBar from './SearchBar.vue';
-import InfoPanel from './InfoPanel.vue';
-import TimelineBar from './TimelineBar.vue';
+} from "vue";
+import GlobeView from "./GlobeView.vue";
+import IntroGlobe from "./IntroGlobe.vue";
+import SearchBar from "./SearchBar.vue";
+import InfoPanel from "./InfoPanel.vue";
+import TimelineBar from "./TimelineBar.vue";
 import {
   buildMonthlyIndex,
   parseHotspotsCsv,
@@ -20,13 +20,13 @@ import {
   monthlyCounts,
   hotspotsToCsv,
   downloadText,
-} from './hotspots.js';
-import { fetchLiveFires } from './liveFirms.js';
+} from "./hotspots.js";
+import { fetchLiveFires } from "./liveFirms.js";
 
 const hotspots = shallowRef([]);
 const monthlyIndex = shallowRef(new Map());
 const monthKeys = ref([]);
-const hotspotError = ref('');
+const hotspotError = ref("");
 const area = reactive({ lat: 39.5, lon: -8, radiusKm: 150 });
 const range = reactive({ from: 2025, to: 2025 });
 const globe = ref(null);
@@ -35,26 +35,18 @@ const selection = ref(null);
 const liveMode = ref(false);
 const liveHotspots = shallowRef([]);
 const liveLoading = ref(false);
-const liveError = ref('');
-const liveStatus = ref('');
-const currentMonth = ref('');
+const liveError = ref("");
+const liveStatus = ref("");
+const currentMonth = ref("");
 const timeLapseActive = ref(false);
-const keyDialogOpen = ref(false);
-const mapKey = ref('');
-const savingKey = ref(false);
-const mapKeyConfigured = ref(false);
-const mapKeyManaged = ref(null);
-const editingMapKey = ref(false);
-const mapKeyStatus = ref('');
 const introProgress = ref(0);
 const introReady = ref(false);
 const started = ref(false);
 const starting = ref(false);
 const LIVE_REFRESH_MS = 10 * 60 * 1000;
-const ACTIVATE_LIVE_AFTER_RESTART = 'viirsmode-live-after-key-setup';
-const KEY_SAVED_BEFORE_RESTART = 'viirsmode-key-saved';
 let liveRefreshTimer = null;
 let introTimer = null;
+let liveRequestVersion = 0;
 
 const yearBounds = computed(() => {
   let min = Infinity;
@@ -76,7 +68,7 @@ const displayedHotspots = computed(() => {
 });
 
 onMounted(async () => {
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
     introProgress.value = 100;
     introReady.value = true;
   } else {
@@ -90,44 +82,24 @@ onMounted(async () => {
   }
 
   try {
-    const res = await fetch('/viirsmode/hotspots.csv');
+    const res = await fetch("/viirsmode/hotspots.csv");
     if (!res.ok) throw new Error(`Hotspot CSV request failed (${res.status})`);
     const parsed = parseHotspotsCsv(await res.text());
     if (!parsed.length)
-      throw new Error('Hotspot CSV contains no valid detections');
+      throw new Error("Hotspot CSV contains no valid detections");
     hotspots.value = parsed;
     monthlyIndex.value = buildMonthlyIndex(parsed);
     monthKeys.value = [...monthlyIndex.value.keys()];
-    currentMonth.value = monthKeys.value[0] ?? '';
+    currentMonth.value = monthKeys.value[0] ?? "";
     range.from = yearBounds.value.max;
     range.to = yearBounds.value.max;
   } catch (error) {
     hotspotError.value = error instanceof Error ? error.message : String(error);
   }
-
-  try {
-    const response = await fetch('/api/setup/status', { cache: 'no-store' });
-    if (response.ok) {
-      const status = await response.json();
-      const firmsKey = status.keys?.find((key) => key.id === 'firms');
-      mapKeyConfigured.value = Boolean(firmsKey?.set);
-      mapKeyManaged.value = firmsKey?.managed ?? null;
-    }
-  } catch {
-    // Historical mode remains available when the local key-setup endpoint is absent.
-  }
-
-  if (sessionStorage.getItem(KEY_SAVED_BEFORE_RESTART) === '1') {
-    sessionStorage.removeItem(KEY_SAVED_BEFORE_RESTART);
-    mapKeyStatus.value = 'NASA FIRMS key saved in local settings.';
-  }
-  if (sessionStorage.getItem(ACTIVATE_LIVE_AFTER_RESTART) === '1') {
-    sessionStorage.removeItem(ACTIVATE_LIVE_AFTER_RESTART);
-    await activateLive();
-  }
 });
 
 onBeforeUnmount(() => {
+  liveRequestVersion++;
   if (liveRefreshTimer) clearInterval(liveRefreshTimer);
   if (introTimer) clearInterval(introTimer);
 });
@@ -204,87 +176,55 @@ async function startExperience() {
   starting.value = false;
 }
 
-async function fetchLiveHotspots() {
+async function fetchLiveHotspots(requestVersion) {
   const payload = await fetchLiveFires();
-  if (payload.keyRequired) {
-    keyDialogOpen.value = true;
-    liveMode.value = false;
-    liveHotspots.value = [];
-    if (liveRefreshTimer) clearInterval(liveRefreshTimer);
-    liveRefreshTimer = null;
-    return false;
-  }
+  if (requestVersion !== liveRequestVersion) return false;
+  liveError.value = "";
   liveHotspots.value = payload.fires;
   liveMode.value = true;
-  const updatedAt = payload.fetchedAt
-    ? new Date(payload.fetchedAt).toLocaleTimeString()
-    : 'unknown';
-  liveStatus.value = `${payload.count} detections · last 24h · updated ${updatedAt}${payload.stale ? ' · cached data' : ''}`;
+  const updatedAt = new Date(payload.fetchedAt).toLocaleTimeString("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+    timeZoneName: "short",
+  });
+  liveStatus.value = `Live: ${payload.shown} of ${payload.total} detections, NOAA-20 VIIRS, last 24 h · Updated at ${updatedAt}`;
   globe.value?.flyToWorld();
   return true;
 }
 
 async function activateLive() {
   if (liveMode.value) {
+    liveRequestVersion++;
     liveMode.value = false;
     liveHotspots.value = [];
-    liveStatus.value = '';
-    liveError.value = '';
+    liveStatus.value = "";
+    liveError.value = "";
     if (liveRefreshTimer) clearInterval(liveRefreshTimer);
     liveRefreshTimer = null;
     return;
   }
   if (liveLoading.value) return;
   liveLoading.value = true;
-  liveError.value = '';
+  liveError.value = "";
+  const requestVersion = ++liveRequestVersion;
   try {
-    const activated = await fetchLiveHotspots();
+    const activated = await fetchLiveHotspots(requestVersion);
     if (activated) {
       timeLapseActive.value = false;
       liveRefreshTimer = setInterval(() => {
-        fetchLiveHotspots().catch((error) => {
-          liveError.value =
-            error instanceof Error ? error.message : String(error);
+        fetchLiveHotspots(requestVersion).catch(() => {
+          if (requestVersion === liveRequestVersion) {
+            liveError.value = "Live data is unavailable right now";
+          }
         });
       }, LIVE_REFRESH_MS);
     }
-  } catch (error) {
-    liveError.value = error instanceof Error ? error.message : String(error);
+  } catch {
+    if (requestVersion === liveRequestVersion) {
+      liveError.value = "Live data is unavailable right now";
+    }
   } finally {
     liveLoading.value = false;
-  }
-}
-
-async function saveMapKey() {
-  const value = mapKey.value.trim();
-  if (!value || savingKey.value) return;
-  savingKey.value = true;
-  liveError.value = '';
-  try {
-    const response = await fetch('/api/setup/keys', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ FIRMS_MAP_KEY: value }),
-      cache: 'no-store',
-    });
-    const payload = await response.json().catch(() => ({}));
-    if (!response.ok) {
-      throw new Error(
-        payload.error || `Could not save NASA FIRMS key (${response.status})`,
-      );
-    }
-    if (started.value) {
-      sessionStorage.setItem(ACTIVATE_LIVE_AFTER_RESTART, '1');
-    } else {
-      sessionStorage.setItem(KEY_SAVED_BEFORE_RESTART, '1');
-    }
-    keyDialogOpen.value = false;
-    mapKey.value = '';
-    mapKeyStatus.value = 'Key saved securely. Restarting the app…';
-  } catch (error) {
-    liveError.value = error instanceof Error ? error.message : String(error);
-  } finally {
-    savingKey.value = false;
   }
 }
 </script>
@@ -305,9 +245,9 @@ async function saveMapKey() {
       <header v-if="started" class="vm-brand">
         <h1>ViirsMode</h1>
         <p>Burning activity calendar · harmonized MODIS + VIIRS</p>
-        <p v-if="hotspotError" class="vm-warn"
-          >Hotspot data unavailable: {{ hotspotError }}</p
-        >
+        <p v-if="hotspotError" class="vm-warn">
+          Hotspot data unavailable: {{ hotspotError }}
+        </p>
       </header>
     </Transition>
 
@@ -322,7 +262,11 @@ async function saveMapKey() {
           >
             <span class="live-indicator" :class="{ pulsing: liveMode }"></span>
             {{
-              liveLoading ? 'LOADING LIVE…' : liveMode ? 'EXIT LIVE' : 'GO LIVE'
+              liveLoading
+                ? "Loading live detections…"
+                : liveMode
+                  ? "EXIT LIVE"
+                  : "GO LIVE"
             }}
           </button>
           <span v-if="liveStatus" class="live-status">{{ liveStatus }}</span>
@@ -384,73 +328,23 @@ async function saveMapKey() {
             <div class="intro-card-heading">
               <span class="intro-live-mark"></span>
               <div>
-                <p class="intro-eyebrow">OPTIONAL · FOR LIVE DETECTIONS</p>
-                <h2>Connect NASA FIRMS</h2>
+                <p class="intro-eyebrow">LIVE · NOAA-20 VIIRS</p>
+                <h2>Current fire detections</h2>
               </div>
             </div>
             <p class="intro-card-copy">
-              Add a free MAP_KEY to explore current global fire activity. You
-              can also start with the historical calendar.
+              Use Go Live inside the globe to display active fire detections
+              from the last 24 hours.
             </p>
-            <div
-              v-if="mapKeyConfigured && !editingMapKey"
-              class="intro-key-configured"
-            >
-              <span>NASA FIRMS key configured</span>
-              <span v-if="mapKeyManaged === 'external'"
-                >· managed externally</span
-              >
-              <button
-                v-else
-                type="button"
-                class="intro-key-edit"
-                @click="editingMapKey = true"
-              >
-                UPDATE KEY
-              </button>
-            </div>
-            <div v-else class="intro-key-row">
-              <input
-                v-model="mapKey"
-                type="password"
-                autocomplete="off"
-                spellcheck="false"
-                aria-label="NASA FIRMS MAP_KEY"
-                placeholder="Paste your NASA FIRMS MAP_KEY"
-                @keyup.enter="saveMapKey"
-              />
-              <button
-                type="button"
-                class="intro-key-save"
-                :disabled="savingKey || !mapKey.trim()"
-                @click="saveMapKey"
-              >
-                {{ savingKey ? 'SAVING…' : 'ADD KEY' }}
-              </button>
-            </div>
-            <p v-if="mapKeyStatus" class="intro-key-status" role="status">
-              {{ mapKeyStatus }}
-            </p>
-            <p v-if="liveError" class="intro-key-error" role="alert">
-              {{ liveError }}
-            </p>
-            <a
-              class="intro-key-link"
-              href="https://firms.modaps.eosdis.nasa.gov/api/map_key/"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Get a free MAP_KEY from NASA <span aria-hidden="true">↗</span>
-            </a>
             <div class="intro-card-divider"></div>
             <button
               type="button"
               class="intro-start"
-              :disabled="!introReady || starting || savingKey"
+              :disabled="!introReady || starting"
               @click="startExperience"
             >
               <span>{{
-                starting ? 'HARMONIZING MODIS + VIIRS…' : 'START EXPLORING'
+                starting ? "HARMONIZING MODIS + VIIRS…" : "START EXPLORING"
               }}</span>
               <span class="intro-start-arrow" aria-hidden="true">↗</span>
             </button>
@@ -469,61 +363,6 @@ async function saveMapKey() {
         </div>
       </main>
     </Transition>
-
-    <div
-      v-if="keyDialogOpen"
-      class="live-key-backdrop"
-      @click.self="keyDialogOpen = false"
-    >
-      <form
-        class="live-key-dialog"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="live-key-title"
-        @submit.prevent="saveMapKey"
-      >
-        <button
-          type="button"
-          class="live-key-close"
-          aria-label="Close"
-          @click="keyDialogOpen = false"
-        >
-          ×
-        </button>
-        <p class="live-kicker">NASA FIRMS · LIVE</p>
-        <h2 id="live-key-title">Enter your FIRMS MAP_KEY</h2>
-        <p>
-          Get a free key from
-          <a
-            href="https://firms.modaps.eosdis.nasa.gov/api/map_key/"
-            target="_blank"
-            rel="noopener noreferrer"
-            >NASA FIRMS</a
-          >. It is saved in this app’s local server configuration and is never
-          sent directly to the browser’s NASA requests.
-        </p>
-        <input
-          v-model="mapKey"
-          type="password"
-          autocomplete="off"
-          spellcheck="false"
-          required
-          autofocus
-          aria-label="NASA FIRMS MAP_KEY"
-          placeholder="Paste your MAP_KEY"
-        />
-        <p v-if="liveError" class="live-dialog-error" role="alert">
-          {{ liveError }}
-        </p>
-        <button
-          type="submit"
-          class="live-key-save"
-          :disabled="savingKey || !mapKey.trim()"
-        >
-          {{ savingKey ? 'SAVING…' : 'SAVE KEY & ENABLE LIVE' }}
-        </button>
-      </form>
-    </div>
 
     <InfoPanel
       v-if="panelOpen"

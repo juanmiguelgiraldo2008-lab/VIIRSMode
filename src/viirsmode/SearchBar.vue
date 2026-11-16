@@ -1,12 +1,12 @@
 <script setup>
-import { ref } from 'vue';
+import { ref } from "vue";
 
 defineProps({ range: Object });
-const emit = defineEmits(['found']);
+const emit = defineEmits(["found"]);
 
-const query = ref('');
+const query = ref("");
 const busy = ref(false);
-const error = ref('');
+const error = ref("");
 
 function parseCoords(text) {
   const m = text.match(/^(-?\d+(?:\.\d+)?)\s*[,;\s]\s*(-?\d+(?:\.\d+)?)$/);
@@ -18,12 +18,12 @@ function parseCoords(text) {
 }
 
 async function search() {
-  error.value = '';
+  error.value = "";
   const text = query.value.trim();
   if (!text) return;
   const coords = parseCoords(text);
   if (coords) {
-    emit('found', { ...coords, name: null });
+    emit("found", { ...coords, name: null });
     return;
   }
   busy.value = true;
@@ -33,7 +33,7 @@ async function search() {
     );
     const list = await res.json();
     if (!list.length) {
-      error.value = 'Place not found';
+      error.value = "Place not found";
       return;
     }
     const [south, north, west, east] = list[0].boundingbox.map(Number);
@@ -45,14 +45,14 @@ async function search() {
       400,
       Math.max(10, Math.round(Math.max(halfLat, halfLon))),
     );
-    emit('found', {
+    emit("found", {
       lat: parseFloat(list[0].lat),
       lon: parseFloat(list[0].lon),
       name: list[0].display_name,
       radiusKm,
     });
   } catch {
-    error.value = 'Search failed. Try coordinates, like 40.4, -3.7';
+    error.value = "Search failed. Try coordinates, like 40.4, -3.7";
   } finally {
     busy.value = false;
   }

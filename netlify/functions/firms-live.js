@@ -1,28 +1,25 @@
 // Server-side proxy: keeps the FIRMS MAP_KEY private and returns a small JSON.
-const SOURCE = 'VIIRS_NOAA20_NRT';
+const SOURCE = "VIIRS_NOAA20_NRT";
 const MAX_POINTS = 15000;
 const TTL_MS = 10 * 60 * 1000;
-let cache = { bbox: '', at: 0, body: null };
+let cache = { bbox: "", at: 0, body: null };
 
 const reply = (body, status = 200) =>
   new Response(JSON.stringify(body), {
     status,
     headers: {
-      'content-type': 'application/json',
-      'cache-control': 'public, max-age=600',
+      "content-type": "application/json",
+      "cache-control": "public, max-age=600",
     },
   });
 
 export default async (req) => {
   const mapKey = process.env.FIRMS_MAP_KEY;
-  if (!mapKey) return reply({ error: 'Live data is not configured' }, 500);
+  if (!mapKey) return reply({ error: "Live data is not configured" }, 500);
 
-  const bbox = new URL(req.url).searchParams.get('bbox') || 'world';
-  if (
-    bbox !== 'world' &&
-    !/^-?\d+(\.\d+)?(,-?\d+(\.\d+)?){3}$/.test(bbox)
-  ) {
-    return reply({ error: 'Invalid bbox' }, 400);
+  const bbox = new URL(req.url).searchParams.get("bbox") || "world";
+  if (bbox !== "world" && !/^-?\d+(\.\d+)?(,-?\d+(\.\d+)?){3}$/.test(bbox)) {
+    return reply({ error: "Invalid bbox" }, 400);
   }
 
   if (cache.body && cache.bbox === bbox && Date.now() - cache.at < TTL_MS) {
@@ -37,21 +34,21 @@ export default async (req) => {
     if (!res.ok) return reply({ error: `FIRMS returned ${res.status}` }, 502);
     text = await res.text();
   } catch {
-    return reply({ error: 'Could not reach FIRMS' }, 502);
+    return reply({ error: "Could not reach FIRMS" }, 502);
   }
 
   const lines = text.split(/\r?\n/);
-  const header = (lines[0] || '').split(',');
+  const header = (lines[0] || "").split(",");
   const idx = Object.fromEntries(header.map((h, i) => [h.trim(), i]));
   if (idx.latitude === undefined || idx.longitude === undefined) {
-    return reply({ error: 'Unexpected response from FIRMS' }, 502);
+    return reply({ error: "Unexpected response from FIRMS" }, 502);
   }
 
   const rows = [];
   for (let i = 1; i < lines.length; i++) {
     if (!lines[i]) continue;
-    const p = lines[i].split(',');
-    if (idx.confidence !== undefined && p[idx.confidence] === 'l') continue;
+    const p = lines[i].split(",");
+    if (idx.confidence !== undefined && p[idx.confidence] === "l") continue;
     const lat = Number(p[idx.latitude]);
     const lon = Number(p[idx.longitude]);
     if (!Number.isFinite(lat) || !Number.isFinite(lon)) continue;

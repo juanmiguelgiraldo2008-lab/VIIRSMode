@@ -1,27 +1,27 @@
 <script setup>
-import { computed } from 'vue';
+import { computed } from "vue";
 
 const props = defineProps({
   months: { type: Array, required: true },
-  currentMonth: { type: String, default: '' },
+  currentMonth: { type: String, default: "" },
 });
 
 const MONTH_NAMES = [
-  'Jan',
-  'Feb',
-  'Mar',
-  'Apr',
-  'May',
-  'Jun',
-  'Jul',
-  'Aug',
-  'Sep',
-  'Oct',
-  'Nov',
-  'Dec',
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
 ];
 // Viridis-like ramp (readable for most color-blind users)
-const STOPS = ['#440154', '#3b528b', '#21908d', '#5dc863', '#fde725'];
+const STOPS = ["#440154", "#3b528b", "#21908d", "#5dc863", "#fde725"];
 
 const byKey = computed(
   () => new Map(props.months.map((m) => [`${m.year}-${m.month}`, m.count])),
@@ -39,7 +39,7 @@ function hexToRgb(hex) {
 }
 
 function colorFor(count) {
-  if (count == null) return '#2a2a33';
+  if (count == null) return "#2a2a33";
   const t = Math.sqrt(count / maxCount.value);
   const pos = t * (STOPS.length - 1);
   const i = Math.min(Math.floor(pos), STOPS.length - 2);
@@ -56,10 +56,10 @@ function countFor(year, month) {
 
 function monthState(year, month) {
   if (!props.currentMonth) return {};
-  const key = `${year}-${String(month).padStart(2, '0')}`;
+  const key = `${year}-${String(month).padStart(2, "0")}`;
   return {
-    'cal-cell--current': key === props.currentMonth,
-    'cal-cell--future': key > props.currentMonth,
+    "cal-cell--current": key === props.currentMonth,
+    "cal-cell--future": key > props.currentMonth,
   };
 }
 </script>

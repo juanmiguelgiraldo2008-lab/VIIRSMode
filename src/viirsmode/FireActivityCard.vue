@@ -1,6 +1,6 @@
 <script setup>
-import { computed } from 'vue';
-import { activityVsMedian } from './hotspots.js';
+import { computed } from "vue";
+import { activityVsMedian } from "./hotspots.js";
 
 const props = defineProps({
   months: { type: Array, required: true },
@@ -8,23 +8,23 @@ const props = defineProps({
   area: { type: Object, required: true },
   range: { type: Object, required: true },
 });
-const emit = defineEmits(['select-year']);
+const emit = defineEmits(["select-year"]);
 
 const MONTH_NAMES = [
-  'January',
-  'February',
-  'March',
-  'April',
-  'May',
-  'June',
-  'July',
-  'August',
-  'September',
-  'October',
-  'November',
-  'December',
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
 ];
-const STOPS = ['#440154', '#3b528b', '#21908d', '#5dc863', '#fde725'];
+const STOPS = ["#440154", "#3b528b", "#21908d", "#5dc863", "#fde725"];
 
 const result = computed(() =>
   activityVsMedian(props.months, props.referenceYear),
@@ -49,19 +49,19 @@ const chartEntries = computed(() => {
   const entries = [];
   for (const entry of result.value.totals) {
     const marker = [
-      [2012, 'VIIRS S-NPP'],
-      [2018, 'NOAA-20'],
+      [2012, "VIIRS S-NPP"],
+      [2018, "NOAA-20"],
     ].find(([year]) => year === entry.year);
     if (marker) {
-      entries.push({ year: entry.year, label: marker[1], kind: 'marker' });
+      entries.push({ year: entry.year, label: marker[1], kind: "marker" });
     }
-    entries.push({ ...entry, kind: 'year' });
+    entries.push({ ...entry, kind: "year" });
   }
   return entries;
 });
 const ratioLabel = computed(() =>
   result.value.ratio === null
-    ? 'no baseline'
+    ? "no baseline"
     : `${result.value.ratio.toFixed(1)}×`,
 );
 
@@ -76,11 +76,11 @@ function colorFor(total) {
     const end = (to >> shift) & 255;
     return Math.round(start + (end - start) * fraction);
   });
-  return `rgb(${channels.join(', ')})`;
+  return `rgb(${channels.join(", ")})`;
 }
 
 function selectYear(year) {
-  emit('select-year', year);
+  emit("select-year", year);
 }
 </script>
 
@@ -103,7 +103,7 @@ function selectYear(year) {
       <strong>{{ ratioLabel }}</strong>
       <span>
         the median of the same months in {{ result.yearsCompared }} other
-        {{ result.yearsCompared === 1 ? 'year' : 'years' }}
+        {{ result.yearsCompared === 1 ? "year" : "years" }}
       </span>
     </div>
     <p class="fire-activity-rank">
@@ -115,14 +115,14 @@ function selectYear(year) {
       <div class="fire-activity-total">
         <span>{{ monthPeriod }} {{ referenceYear }}</span>
         <strong
-          >{{ result.total.toLocaleString('en-US') }}
+          >{{ result.total.toLocaleString("en-US") }}
           <small>harmonized groups</small></strong
         >
       </div>
       <div class="fire-activity-total">
         <span>Baseline median</span>
         <strong
-          >{{ result.median.toLocaleString('en-US') }}
+          >{{ result.median.toLocaleString("en-US") }}
           <small>harmonized groups</small></strong
         >
       </div>
@@ -160,7 +160,7 @@ function selectYear(year) {
             ></span>
           </span>
           <span class="fire-activity-value">{{
-            entry.total.toLocaleString('en-US')
+            entry.total.toLocaleString("en-US")
           }}</span>
         </button>
       </template>
