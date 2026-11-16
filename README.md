@@ -100,6 +100,16 @@ Options: `--radius-km`, `--frp-ratio`, `--frp-absolute`, `--no-merge`.
 | `LICENSE` | License of ViirsMode |
 | `LICENSE-gods-eye-view` | Original license of the base project |
 
+
+## Next steps
+
+- **Out-of-sample validation:** fit the period weights on some years and measure the error on years held out, instead of validating on the same years used to compute them.
+- **Fresh data:** add 2026 and later detections from the FIRMS area API, and a new period for NOAA-21. S-NPP stopped delivering data on November 2, 2026.
+- **Robust parameters:** test how the grouping radius and FRP tolerance change the weights, and pick them with a sensitivity analysis instead of fixed defaults.
+- **More regions:** run the importer on more countries and check whether the weights hold across fire regimes.
+- **Live and historical together:** connect the Go Live layer to the calendar, so today's detections can be compared with the harmonized history.
+- **Automatic updates:** a scheduled job that rebuilds the dataset instead of running the importer by hand.
+
 ## Credits
 
 - **Data:** NASA FIRMS (Earthdata), MODIS Collection 6.1 and VIIRS 375 m active-fire detections. https://www.earthdata.nasa.gov/data/tools/firms
